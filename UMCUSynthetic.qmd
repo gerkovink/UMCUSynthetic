@@ -1,0 +1,34 @@
+---
+title: "Synthetic data in `R`: Generating synthetic data with high utility using `mice`"
+author: "Thom Volker & Gerko Vink"
+bibliography: files/synthetic-osf-workshop.bib
+link-citations: true
+format: 
+  html:
+    toc: true
+---
+
+
+
+# Introduction
+
+---
+
+In this workshop, you will learn how to create and evaluate synthetic data in `R`. In the practical, we will work with the `R` package `mice` [@mice]. `mice` was originally developed to impute missing data, but, as you will experience, can also be used to impute synthetic data [see @volker_vink_synthetic_mice_2021]. Other alternatives to create synthetic data are, for example, the R-package `synthpop` [@synthpop], or the stand-alone software `IVEware` [@iveware]. 
+
+If you have `R` and `R Studio` installed on your device, you can follow all the steps from this practical using your local version of R Studio. In case you do not have an installation of `R` and `R Studio`, you can quickly create an account on [R Studio Cloud](https://login.rstudio.cloud/register), and work with a project that is set-up for this workshop (the link will follow). Note that you have the opportunity to work with your own data (you can also use data provided by us). If you are going to work via `R Studio Cloud`, you may not want to upload your own data to this server. In this case, you can still decide to work with the data provided by us. Theoretically, you could also install `R` and `R Studio` on the spot, but since we do not have infinite time, we advise to use `R Studio Cloud` if you have no access to `R` and `R Studio` on your device already.
+
+In this workshop, you will (at least) use the following packages. Make sure to load them (in case you haven't installed them already, install them first, using `install.packages("package.name")`).
+
+```{r load-packages, message=F, warning=F}
+library(magrittr)
+library(mice)
+library(ggmice)
+library(psych)
+```
+
+---
+
+# Data
+
+---
