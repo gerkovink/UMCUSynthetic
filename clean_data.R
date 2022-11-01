@@ -18,21 +18,6 @@ heart_failure %<>%
          follow_up = time) %>%
   select(-c(DEATH_EVENT, high_blood_pressure, time))
 
-heart_failure %<>% 
-  apply_labels(age = "Age in years",
-               anaemia = "Whether the patient has a decrease of red blood cells (No/Yes)",
-               hypertension = "Whether the patient has high blood pressure (No/Yes)",
-               creatinine_phosphokinase = "Level of the creatinine phosphokinase enzyme in the blood (mcg/L)",
-               diabetes = "Whether the patient has diabetes (No/Yes)",
-               ejection_fraction = "Percentage of blood leaving the heart at each contraction",
-               platelets = "Platelets in de blood (kiloplatelets/mL)",
-               sex = "Sex (Female/Male)",
-               serum_creatinine = "Level of serum creatinine in the blood (mg/dL)",
-               serum_sodium = "Level of serum sodium in the blood (mg/dL)",
-               smoking = "Whether the patient smokes (No/Yes)",
-               follow_up = "Follow-up period (days)",
-               deceased = "Whether the patient decreased during the follow-up period")
-
 heart_failure <- data.frame(heart_failure)
 
 saveRDS(heart_failure, file = "data//heart_failure.RDS")
