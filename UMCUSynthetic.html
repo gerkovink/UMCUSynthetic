@@ -134,6 +134,17 @@ div.csl-indent {
   <li><a href="#loading-your-own-data" id="toc-loading-your-own-data" class="nav-link" data-scroll-target="#loading-your-own-data">Loading your own data</a></li>
   </ul></li>
   <li><a href="#creating-synthetic-data" id="toc-creating-synthetic-data" class="nav-link" data-scroll-target="#creating-synthetic-data">Creating synthetic data</a></li>
+  <li><a href="#synthetic-data-utility" id="toc-synthetic-data-utility" class="nav-link" data-scroll-target="#synthetic-data-utility">Synthetic data utility</a>
+  <ul class="collapse">
+  <li><a href="#univariate-data-utility" id="toc-univariate-data-utility" class="nav-link" data-scroll-target="#univariate-data-utility">Univariate data utility</a></li>
+  <li><a href="#multivariate-data-utility" id="toc-multivariate-data-utility" class="nav-link" data-scroll-target="#multivariate-data-utility">Multivariate data utility</a>
+  <ul class="collapse">
+  <li><a href="#general-utility-measures" id="toc-general-utility-measures" class="nav-link" data-scroll-target="#general-utility-measures">General utility measures</a></li>
+  <li><a href="#specific-utility-measures" id="toc-specific-utility-measures" class="nav-link" data-scroll-target="#specific-utility-measures">Specific utility measures</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#statistical-disclosure-control" id="toc-statistical-disclosure-control" class="nav-link" data-scroll-target="#statistical-disclosure-control">Statistical disclosure control</a></li>
+  <li><a href="#inferences-from-synthetic-data" id="toc-inferences-from-synthetic-data" class="nav-link" data-scroll-target="#inferences-from-synthetic-data">Inferences from synthetic data</a></li>
   </ul>
 </nav>
 </div>
@@ -165,14 +176,15 @@ div.csl-indent {
 <h1>Introduction</h1>
 <p>In this workshop, you will learn how to create and evaluate synthetic data in <code>R</code>. In the practical, we will work with the <code>R</code> package <code>mice</code> <span class="citation" data-cites="mice">(<a href="#ref-mice" role="doc-biblioref">van Buuren and Groothuis-Oudshoorn 2011</a>)</span>. <code>mice</code> was originally developed to impute missing data, but, as you will experience, can also be used to impute synthetic data <span class="citation" data-cites="volker_vink_synthetic_mice_2021">(see <a href="#ref-volker_vink_synthetic_mice_2021" role="doc-biblioref">Volker and Vink 2021</a>)</span>. Other alternatives to create synthetic data are, for example, the R-package <code>synthpop</code> <span class="citation" data-cites="synthpop">(<a href="#ref-synthpop" role="doc-biblioref">Nowok, Raab, and Dibben 2016</a>)</span>, or the stand-alone software <code>IVEware</code> <span class="citation" data-cites="iveware">(<a href="#ref-iveware" role="doc-biblioref"><span>“<span>IVE</span>ware: Imputation and Variance Estimation Software,”</span> n.d.</a>)</span>.</p>
 <p>If you have <code>R</code> and <code>R Studio</code> installed on your device, you can follow all the steps from this practical using your local version of R Studio. In case you do not have an installation of <code>R</code> and <code>R Studio</code>, you can quickly create an account on <a href="https://login.rstudio.cloud/register">R Studio Cloud</a>, and work with a project that is set-up for this workshop (the link will follow). Note that you have the opportunity to work with your own data (you can also use data provided by us). If you are going to work via <code>R Studio Cloud</code>, you may not want to upload your own data to this server. In this case, you can still decide to work with the data provided by us. You could also install <code>R</code> and <code>R Studio</code> on the spot, but since we do not have infinite time, we advise to use <code>R Studio Cloud</code> if you have no access to <code>R</code> and <code>R Studio</code> on your device already.</p>
-<p>In this workshop, you will (at least) use the packages <code>mice</code> <span class="citation" data-cites="mice">(<a href="#ref-mice" role="doc-biblioref">van Buuren and Groothuis-Oudshoorn 2011</a>)</span>, <code>ggmice</code> <span class="citation" data-cites="ggmice">(make sure to download the latest version from GitHub, <a href="#ref-ggmice" role="doc-biblioref">Oberman 2022</a>)</span>, <code>magrittr</code> <span class="citation" data-cites="magrittr">(<a href="#ref-magrittr" role="doc-biblioref">Bache and Wickham 2022</a>)</span> and <code>psych</code> <span class="citation" data-cites="psych">(<a href="#ref-psych" role="doc-biblioref">Revelle 2022</a>)</span>. Make sure to load them (in case you haven’t installed them already, install them first, using <code>install.packages("package.name")</code>).</p>
+<p>In this workshop, you will (at least) use the packages <code>mice</code> <span class="citation" data-cites="mice">(<a href="#ref-mice" role="doc-biblioref">van Buuren and Groothuis-Oudshoorn 2011</a>)</span>, <code>ggmice</code> <span class="citation" data-cites="ggmice">(make sure to download the latest version from GitHub, <a href="#ref-ggmice" role="doc-biblioref">Oberman 2022</a>)</span>, <code>ggplot2</code> <span class="citation" data-cites="ggplot2">(<a href="#ref-ggplot2" role="doc-biblioref">Wickham 2016</a>)</span>, <code>patchwork</code> <span class="citation" data-cites="patchwork">(<a href="#ref-patchwork" role="doc-biblioref">Pedersen 2022</a>)</span>, <code>psych</code> <span class="citation" data-cites="psych">(<a href="#ref-psych" role="doc-biblioref">Revelle 2022</a>)</span>, <code>purrr</code> <span class="citation" data-cites="purrr">(<a href="#ref-purrr" role="doc-biblioref">Henry and Wickham 2022</a>)</span> and <code>synthpop</code> <span class="citation" data-cites="synthpop">(<a href="#ref-synthpop" role="doc-biblioref">Nowok, Raab, and Dibben 2016</a>)</span>. Make sure to load them (in case you haven’t installed them already, install them first, using <code>install.packages("package.name")</code>).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"amices/mice"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"amices/ggmice"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ggplot2"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"patchwork"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"psych"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"purrr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"purrr"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"synthpop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mice)      <span class="co"># to create the synthetic data</span></span>
@@ -180,12 +192,14 @@ div.csl-indent {
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)   <span class="co"># required when using ggmice</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) <span class="co"># to stitch multiple figures together</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)     <span class="co"># to obtain descriptive statistics</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)     <span class="co"># to work with multiply imputed synthetic datasets</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)     <span class="co"># to work with multiply imputed synthetic datasets</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(synthpop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Additionally, make sure to set a seed, so that your results can be compared with our results.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<hr>
 </section>
 <section id="data" class="level1">
 <h1>Data</h1>
@@ -604,6 +618,7 @@ div.csl-indent {
 </div>
 </div>
 <p>The <code>describe()</code> function gives more distributional information about all variables.</p>
+<hr>
 </section>
 <section id="loading-your-own-data" class="level2">
 <h2 class="anchored" data-anchor-id="loading-your-own-data">Loading your own data</h2>
@@ -654,6 +669,7 @@ div.csl-indent {
 </div>
 <p>If your data has the correct format, we can proceed to the next steps. Given that you are using your own data, we assume that you have (at least some) knowledge about the variables in your data. We will therefore skip the steps to obtain some descriptive information of the variables in your data, and continue to creating and evaluating synthetic data.</p>
 <p>In the sequel, we will outline how to create and evaluate synthetic data using the <em>Heart failure clinical records</em> data, but most of these steps should be directly applicable to your own data. In case something gives an error, do not hesitate to ask how the problem can be solved!</p>
+<hr>
 </section>
 </section>
 <section id="creating-synthetic-data" class="level1">
@@ -692,8 +708,14 @@ div.csl-indent {
 </div>
 <hr>
 <p>Creating the synthetic data is a piece of cake. However, after creating the synthetic data, we must assess its quality in terms of data utility and disclosure risk. Quality control is conveniently performed using visual methods, and can be done using the package <code>ggmice</code> <span class="citation" data-cites="ggmice">(<a href="#ref-ggmice" role="doc-biblioref">Oberman 2022</a>)</span>.</p>
-<p>The quality of synthetic data sets can be assessed on multiple levels and in multiple different ways. Starting on a univariate level, the distributions of the synthetic data sets can be compared with the distribution of the observed data. For the continuous variables, this can be done by comparing the densities of the synthetic data sets with the observed data sets.</p>
 <hr>
+</section>
+<section id="synthetic-data-utility" class="level1">
+<h1>Synthetic data utility</h1>
+<p>The quality of synthetic data sets can be assessed on multiple levels and in multiple different ways. Starting on a univariate level, the distributions of the synthetic data sets can be compared with the distribution of the observed data. For the continuous variables, this can be done by comparing the densities of the synthetic data sets with the observed data sets. Later on, we also look at the utility of the synthetic data on a multivariate level.</p>
+<hr>
+<section id="univariate-data-utility" class="level2">
+<h2 class="anchored" data-anchor-id="univariate-data-utility">Univariate data utility</h2>
 <p><strong>4. To get an idea of whether creating the synthetic data went accordingly, compare the 10 rows of the fourth synthetic data set with the first 10 rows of the original data.</strong></p>
 <p><em>Hint:</em> You can use <code>complete(syn_param, 4)</code> to extract the fourth synthetic data set from the <code>syn_param</code> object.</p>
 <div class="cell">
@@ -725,154 +747,154 @@ div.csl-indent {
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:right;"> 70.92261 </td>
+   <td style="text-align:right;"> 83.96747 </td>
    <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 366.6747 </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 42.92144 </td>
-   <td style="text-align:right;"> 204390.89 </td>
-   <td style="text-align:right;"> 2.7152725 </td>
-   <td style="text-align:right;"> 131.6446 </td>
+   <td style="text-align:right;"> 2966.86464 </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 43.58900 </td>
+   <td style="text-align:right;"> 215364.2 </td>
+   <td style="text-align:right;"> 1.8241434 </td>
+   <td style="text-align:right;"> 134.1695 </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 179.48829 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> -42.283784 </td>
   </tr>
   <tr>
-   <td style="text-align:right;"> 48.30249 </td>
+   <td style="text-align:right;"> 91.88286 </td>
    <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 2046.3943 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 30.70660 </td>
-   <td style="text-align:right;"> 408473.87 </td>
-   <td style="text-align:right;"> 2.5798796 </td>
-   <td style="text-align:right;"> 138.4602 </td>
+   <td style="text-align:right;"> 1599.86535 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 35.58796 </td>
+   <td style="text-align:right;"> 392458.9 </td>
+   <td style="text-align:right;"> 1.9668436 </td>
+   <td style="text-align:right;"> 137.9384 </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 98.19146 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 26.810690 </td>
   </tr>
   <tr>
-   <td style="text-align:right;"> 86.10533 </td>
+   <td style="text-align:right;"> 74.24202 </td>
    <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> -302.6695 </td>
+   <td style="text-align:right;"> -905.01249 </td>
    <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 37.89212 </td>
-   <td style="text-align:right;"> 206278.40 </td>
-   <td style="text-align:right;"> -0.1570883 </td>
-   <td style="text-align:right;"> 127.3648 </td>
+   <td style="text-align:right;"> 39.93827 </td>
+   <td style="text-align:right;"> 263394.8 </td>
+   <td style="text-align:right;"> 2.0896381 </td>
+   <td style="text-align:right;"> 135.2425 </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 153.21827 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 132.173400 </td>
   </tr>
   <tr>
-   <td style="text-align:right;"> 57.91638 </td>
+   <td style="text-align:right;"> 68.77223 </td>
    <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 1661.3744 </td>
+   <td style="text-align:right;"> 702.98924 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 46.08093 </td>
+   <td style="text-align:right;"> 108217.8 </td>
+   <td style="text-align:right;"> 1.4278256 </td>
+   <td style="text-align:right;"> 141.4574 </td>
+   <td style="text-align:left;"> Male </td>
    <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 49.71085 </td>
-   <td style="text-align:right;"> 332615.90 </td>
-   <td style="text-align:right;"> 0.1345579 </td>
-   <td style="text-align:right;"> 139.6346 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 83.850791 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 57.83077 </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> -52.44349 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 26.88242 </td>
+   <td style="text-align:right;"> 262358.1 </td>
+   <td style="text-align:right;"> 2.3557764 </td>
+   <td style="text-align:right;"> 129.7057 </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 81.52507 </td>
+   <td style="text-align:right;"> 99.549848 </td>
   </tr>
   <tr>
-   <td style="text-align:right;"> 50.55972 </td>
+   <td style="text-align:right;"> 69.29570 </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 213.24534 </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 27.66203 </td>
+   <td style="text-align:right;"> 240304.6 </td>
+   <td style="text-align:right;"> 0.9178891 </td>
+   <td style="text-align:right;"> 133.8325 </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> -1011.7901 </td>
+   <td style="text-align:right;"> 101.098803 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 58.29211 </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> -150.98220 </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 13.88417 </td>
+   <td style="text-align:right;"> 176351.4 </td>
+   <td style="text-align:right;"> 1.8101236 </td>
+   <td style="text-align:right;"> 138.0974 </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 27.34550 </td>
-   <td style="text-align:right;"> 305225.88 </td>
-   <td style="text-align:right;"> 3.3017948 </td>
-   <td style="text-align:right;"> 131.5210 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 159.857677 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 49.59240 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> -479.35084 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 23.33926 </td>
+   <td style="text-align:right;"> 291820.3 </td>
+   <td style="text-align:right;"> 1.4594309 </td>
+   <td style="text-align:right;"> 140.4755 </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 39.512911 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 62.62224 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 61.40998 </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:right;"> 29.15601 </td>
+   <td style="text-align:right;"> 379221.6 </td>
+   <td style="text-align:right;"> 2.1128799 </td>
+   <td style="text-align:right;"> 136.2695 </td>
    <td style="text-align:left;"> Female </td>
-   <td style="text-align:left;"> No </td>
+   <td style="text-align:left;"> Yes </td>
    <td style="text-align:left;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 167.43579 </td>
+   <td style="text-align:right;"> 7.835248 </td>
   </tr>
   <tr>
-   <td style="text-align:right;"> 55.83006 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> -216.3143 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 39.51518 </td>
-   <td style="text-align:right;"> 295136.63 </td>
-   <td style="text-align:right;"> 0.9162642 </td>
-   <td style="text-align:right;"> 136.9804 </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:left;"> No </td>
+   <td style="text-align:right;"> 61.52326 </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 26.48984 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 54.29551 </td>
+   <td style="text-align:right;"> -215.86725 </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 737.2774 </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 32.83620 </td>
-   <td style="text-align:right;"> 359939.84 </td>
-   <td style="text-align:right;"> 1.1211233 </td>
-   <td style="text-align:right;"> 136.3835 </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 43.93452 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 73.11211 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 1514.7399 </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 40.19810 </td>
-   <td style="text-align:right;"> 57423.31 </td>
-   <td style="text-align:right;"> 2.0694278 </td>
-   <td style="text-align:right;"> 137.8042 </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 48.08214 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 87.08193 </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 2748.6788 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 27.68107 </td>
-   <td style="text-align:right;"> 350128.93 </td>
-   <td style="text-align:right;"> 2.2497322 </td>
-   <td style="text-align:right;"> 137.3318 </td>
+   <td style="text-align:right;"> 35.14801 </td>
+   <td style="text-align:right;"> 275258.9 </td>
+   <td style="text-align:right;"> 0.9472100 </td>
+   <td style="text-align:right;"> 137.1637 </td>
    <td style="text-align:left;"> Female </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 95.18380 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 81.42981 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 945.2391 </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 38.98448 </td>
-   <td style="text-align:right;"> 279901.98 </td>
-   <td style="text-align:right;"> 0.5998120 </td>
-   <td style="text-align:right;"> 131.2643 </td>
-   <td style="text-align:left;"> Male </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> -26.28810 </td>
+   <td style="text-align:right;"> 12.185303 </td>
   </tr>
 </tbody>
 </table></div>
@@ -1144,6 +1166,356 @@ div.csl-indent {
 </div>
 <p>We do a much better job than we did before. The synthetic data seems to closely follow the distribution of the observed data, and all irregularities in the observed data are pretty much recreated in the synthetic data, which is what we hope to see.</p>
 <hr>
+<p>There are also other, more formal ways to assess the utility of the synthetic data, although there is generally some critique against these methods <span class="citation" data-cites="drechsler_utility_psd">(see, e.g., <a href="#ref-drechsler_utility_psd" role="doc-biblioref">Drechsler 2022</a>)</span>. Here, we will discuss the most formal utility measure, the <span class="math inline">\(pMSE\)</span>, but there are others (although all utility measures tend to correlate strongly). The <span class="math inline">\(pMSE\)</span> is defined as</p>
+<p><span class="math display">\[
+pMSE = \frac{1}{m}\sum^m_{j=1} \frac{1}{n_{obs} + n_{syn}}
+\Bigg(
+\sum^{n_{obs}}_{i=1} \Big(\hat{\pi}_i - \frac{n_{obs}}{n_{obs} + n_{syn}}\Big)^2 +
+\sum^{n_{obs} + n_{syn}}_{i={(n_{obs} + 1)}} \Big(\hat{\pi_i} - \frac{n_{syn}}{n_{obs} + n_{syn}}\Big)^2
+\Bigg),
+\]</span></p>
+<p>which, in our case, simplifies to</p>
+<p><span class="math display">\[
+pMSE = \frac{1}{10} \sum^{10}_{j=1} \frac{1}{598}
+\Bigg(
+\sum^{n_{obs} + n_{syn}}_{i=1} \Big(\hat{\pi}_i - \frac{1}{2}\Big)^2
+\Bigg),
+\]</span></p>
+<p>where <span class="math inline">\(n_{obs}\)</span> and <span class="math inline">\(n_{syn}\)</span> are the sample sizes of the observed and synthetic data, <span class="math inline">\(\hat{\pi}_i\)</span> is the probability of belonging to the synthetic data. Note that to calculate the this measure, each synthetic data set is stacked below the observed data, resulting in <span class="math inline">\(m=10\)</span> sets of observed and synthetic data.</p>
+<hr>
+<p><strong>11. Calculate the <span class="math inline">\(pMSE\)</span> for the variable <code>creatinine_phosphokinase</code> over all ten synthetic data sets, for both synthetic sets and compare the values between both synthesis methods.</strong></p>
+<p><em>Hint:</em> First, create a list with all <span class="math inline">\(m=10\)</span> synthetic data sets, then calculate the predicted probabilities for each data set, take the mean over these predicted probabilities, and subsequently, take the mean over the synthetic sets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>param_dats <span class="ot">&lt;-</span> <span class="fu">complete</span>(syn_param, <span class="st">"all"</span>, <span class="at">include =</span> F)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>pi_param <span class="ot">&lt;-</span> param_dats <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">0</span><span class="st">`</span> <span class="ot">=</span> heart_failure,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                         <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> .x, </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">.id =</span> <span class="st">"Synthetic"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Synthetic =</span> <span class="fu">as.factor</span>(Synthetic)) <span class="sc">|&gt;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">glm</span>(<span class="at">formula =</span> Synthetic <span class="sc">~</span> creatinine_phosphokinase, <span class="at">family =</span> binomial) <span class="sc">|&gt;</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">predict</span>(<span class="at">type =</span> <span class="st">"response"</span>))</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>cart_dats <span class="ot">&lt;-</span> <span class="fu">complete</span>(syn_cart, <span class="st">"all"</span>, <span class="at">include =</span> F)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>pi_cart <span class="ot">&lt;-</span> cart_dats <span class="sc">|&gt;</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">0</span><span class="st">`</span> <span class="ot">=</span> heart_failure,</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>                         <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> .x, </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>                         <span class="at">.id =</span> <span class="st">"Synthetic"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Synthetic =</span> <span class="fu">as.factor</span>(Synthetic)) <span class="sc">|&gt;</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">glm</span>(<span class="at">formula =</span> Synthetic <span class="sc">~</span> creatinine_phosphokinase, <span class="at">family =</span> binomial) <span class="sc">|&gt;</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">predict</span>(<span class="at">type =</span> <span class="st">"response"</span>))</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(pi_param, <span class="sc">~</span><span class="fu">mean</span>((.x <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0003516664</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(pi_cart, <span class="sc">~</span><span class="fu">mean</span>((.x <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.504541e-05</code></pre>
+</div>
+</div>
+<p>If you don’t want to perform these calculations by hand, there is functionality in the <code>R</code>-package <code>synthpop</code> to calculate the <span class="math inline">\(pMSE\)</span> for you.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">complete</span>(syn_param, <span class="st">"all"</span>, <span class="at">include =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">utility.gen.list</span>(heart_failure, </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">vars =</span> <span class="st">"creatinine_phosphokinase"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">maxorder =</span> <span class="dv">0</span>, </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">"logit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fitting syntheses: 1 2 3 4 5 6 7 8 9 10 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Utility score calculated by method: logit
+
+Call:
+utility.gen.list(object = complete(syn_param, "all", include = FALSE), 
+    data = heart_failure, method = "logit", maxorder = 0, vars = "creatinine_phosphokinase")
+
+Mean utility results from 10 syntheses:
+    pMSE   S_pMSE 
+0.000352 1.682372 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">complete</span>(syn_cart, <span class="st">"all"</span>, <span class="at">include =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">utility.gen.list</span>(heart_failure, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">vars =</span> <span class="st">"creatinine_phosphokinase"</span>, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">maxorder =</span> <span class="dv">0</span>, </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">"logit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fitting syntheses: 1 2 3 4 5 6 7 8 9 10 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Utility score calculated by method: logit
+
+Call:
+utility.gen.list(object = complete(syn_cart, "all", include = FALSE), 
+    data = heart_failure, method = "logit", maxorder = 0, vars = "creatinine_phosphokinase")
+
+Mean utility results from 10 syntheses:
+    pMSE   S_pMSE 
+0.000055 0.263337 </code></pre>
+</div>
+</div>
+<p>It becomes immediately obvious that the <span class="math inline">\(pMSE\)</span> is higher for the parametrically synthesized data sets, but it is hard to interpret these numbers. To get a more insightful measure, we can take ratio of the calculated <span class="math inline">\(pMSE\)</span> over the expected <span class="math inline">\(pMSE\)</span> under the null distribution of a <em>correct</em> synthesis model (i.e., in line with the data-generating model). The <span class="math inline">\(pMSE\)</span>-ratio is given by</p>
+<p><span class="math display">\[
+\begin{aligned}
+pMSE \text{ ratio } &amp;=
+\frac{pMSE}
+{(k-1)(\frac{n_{\text{obs}}}{n_{\text{syn}} + n_{\text{obs}}})^2(\frac{n_{\text{syn}}}{n_{\text{syn}} + n_{\text{obs}}}) / (n_{\text{obs}} + n_{\text{syn}})} \\ &amp;=
+\frac{pMSE}{(k-1)(\frac{1}{2})^3/(n_{obs} + n_{syn})},
+\end{aligned}
+\]</span></p>
+<p>where <span class="math inline">\(k\)</span> denotes the number of predictors in the propensity score model, including the intercept.</p>
+<p>In our case, we get</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>pMSE_param <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(pi_param, <span class="sc">~</span><span class="fu">mean</span>((.x <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>pMSE_param <span class="sc">/</span> ((<span class="dv">2-1</span>)<span class="sc">*</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">3</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span><span class="fu">nrow</span>(heart_failure)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.682372</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>pMSE_cart <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(pi_cart, <span class="sc">~</span><span class="fu">mean</span>((.x <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>pMSE_cart <span class="sc">/</span> ((<span class="dv">2-1</span>)<span class="sc">*</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">3</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span><span class="fu">nrow</span>(heart_failure)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2633372</code></pre>
+</div>
+</div>
+<p>Ideally, the <span class="math inline">\(pMSE\)</span> ratio equals <span class="math inline">\(1\)</span>, but according to the <code>synthpop</code> authors, values below <span class="math inline">\(10\)</span> are indicative of high quality synthetic data. This would indicate that both synthesis models are good models to synthesize the variable <code>creatinine_phosphokinase</code>. Yet, I would make some reservations with respect to the quality of the parametric synthesis model in this case.</p>
+<hr>
+</section>
+<section id="multivariate-data-utility" class="level2">
+<h2 class="anchored" data-anchor-id="multivariate-data-utility">Multivariate data utility</h2>
+<p>Being able to reproduce the original distributions is a good first step, but generally the goal of synthetic data reaches beyond that. Specifically, we generally also want to reproduce the relationships between the variables in the data. The problem here is that visualizations are often most insightful to assess the quality of synthetic data, but this is quite cumbersome for multivariate relationships. Creating visualizations beyond bivariate relationships is often not feasible, whereas displaying all bivariate relationships in the data already results in <span class="math inline">\(p(p-1)/2\)</span> different figures.</p>
+<p>In the synthetic data literature, a distinction is often made between general and specific utility measures. General utility measures assess to what extent the relationships between combinations of variables (and potential interactions between them) are preserved in the synthetic data set. These measures are often for pairs of variables, or for all combinations of variables. Specific utility measures focus, as the name already suggests, on a specific analysis. This analysis is performed on the observed data and the synthetic data, and the similarity between inferences on these data sets is quantified.</p>
+<section id="general-utility-measures" class="level3">
+<h3 class="anchored" data-anchor-id="general-utility-measures">General utility measures</h3>
+<p>Continuing with our <span class="math inline">\(pMSE\)</span> approach, we can inspect which interactions of variables can predict whether observations are “true” or “synthetic” using the standardized pMSE measure, similarly to what we just did using individual variables. Hence, we predict whether observations can be classified based on the interaction of two variables.</p>
+<p>Using the functionality of synthpop, we can assess the utility of all bivariate relationships by calculating the <span class="math inline">\(pMSE\)</span>-ratio for each pair of variables (including their interaction).</p>
+<p><strong>12. Use the function <code>utility.gen.list()</code> from the <code>synthpop</code> package to calculate the <span class="math inline">\(pMSE\)</span>-ratio for each pair of variables for both synthetic sets. What do you see?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">utility.gen.list</span>(param_dats, heart_failure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running 50 permutations to get NULL utilities and printing every 10th.
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Utility score calculated by method: cart
+
+Call:
+utility.gen.list(object = param_dats, data = heart_failure)
+
+Null utilities simulated from a permutation test with 50 replications.
+
+
+Mean utility results from 10 syntheses:
+    pMSE   S_pMSE 
+0.181545 3.245412 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">utility.gen.list</span>(cart_dats, heart_failure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running 50 permutations to get NULL utilities and printing every 10th.
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 
+synthesis 10 20 30 40 50 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Utility score calculated by method: cart
+
+Call:
+utility.gen.list(object = cart_dats, data = heart_failure)
+
+Null utilities simulated from a permutation test with 50 replications.
+
+
+Mean utility results from 10 syntheses:
+    pMSE   S_pMSE 
+0.093716 1.833425 </code></pre>
+</div>
+</div>
+<p>The <code>CART</code> model was somewhat better, but the difference is relatively small. To get more insight into which variables and bivariate relationships were synthesized accordingly, and which can be improved, we can use <code>utility.tables.list()</code>.</p>
+<p><strong>13. Use the function <code>utility.tables.list()</code> from the <code>synthpop</code> package to calculate the <span class="math inline">\(pMSE\)</span>-ratio for each pair of variables for both synthetic sets. What do you see?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">utility.tables.list</span>(param_dats, heart_failure,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">min.scale =</span> <span class="dv">0</span>, <span class="at">max.scale =</span> <span class="dv">40</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Two-way utility: S_pMSE value plotted for 78 pairs of variables.
+
+Variable combinations with worst 5 utility scores (S_pMSE):
+     02.anaemia:03.creatinine_phosphokinase 
+                                    39.6958 
+03.creatinine_phosphokinase:11.hypertension 
+                                    38.7470 
+         03.creatinine_phosphokinase:09.sex 
+                                    38.6677 
+     03.creatinine_phosphokinase:10.smoking 
+                                    38.4500 
+    03.creatinine_phosphokinase:12.deceased 
+                                    38.3033 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UMCUSynthetic_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Medians and maxima of selected utility measures for all tables compared
+       Medians  Maxima
+pMSE    0.0182  0.1148
+S_pMSE  5.1375 39.6958
+df      9.0000 24.0000
+
+For more details of all scores use print.tabs = TRUE.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">utility.tables.list</span>(cart_dats, heart_failure,</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">min.scale =</span> <span class="dv">0</span>, <span class="at">max.scale =</span> <span class="dv">40</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Two-way utility: S_pMSE value plotted for 78 pairs of variables.
+
+Variable combinations with worst 5 utility scores (S_pMSE):
+                       09.sex:10.smoking 
+                                  4.7342 
+                12.deceased:13.follow_up 
+                                  2.4614 
+                      01.age:04.diabetes 
+                                  1.9193 
+       05.ejection_fraction:13.follow_up 
+                                  1.8259 
+03.creatinine_phosphokinase:13.follow_up 
+                                  1.7762 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UMCUSynthetic_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Medians and maxima of selected utility measures for all tables compared
+       Medians  Maxima
+pMSE    0.0022  0.0092
+S_pMSE  1.1904  4.7342
+df      9.0000 24.0000
+
+For more details of all scores use print.tabs = TRUE.</code></pre>
+</div>
+</div>
+<p>Here, we finally see that our parametric synthesis model is severely flawed. Some of the <span class="math inline">\(pMSE\)</span> ratios are larger than 30, which means that these variables are close to useless when the goal is to make inferences. Our non-parametric synthesis model is doing very good. A maximum <span class="math inline">\(pMSE\)</span>-ratio that is smaller than <span class="math inline">\(5\)</span> actually indicates that our synthetic data are of high quality.</p>
+<hr>
+</section>
+<section id="specific-utility-measures" class="level3">
+<h3 class="anchored" data-anchor-id="specific-utility-measures">Specific utility measures</h3>
+<p>Specific utility measures assess whether the same analysis on the observed and the synthetic data gives similar results. Say that we are interested in, for instance, the relationship between whether a person survives, the age of this person, whether this person has diabetes and whether or not this person smokes, including the follow-up time as a control variable in the model.</p>
+<hr>
+<p><strong>14. Fit this model as a logistic regression model using <code>with()</code>, and pool the results over synthetic data sets. Compare the synthetic data results with the results obtained on the original data, what do you see?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(syn_param, <span class="fu">glm</span>(deceased <span class="sc">~</span> age <span class="sc">+</span> diabetes <span class="sc">+</span> smoking <span class="sc">+</span> follow_up, </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> binomial)) <span class="sc">|&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>() <span class="sc">|&gt;</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">'term'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            estimate std.error statistic       df p.value
+(Intercept)   -0.543     0.744    -0.729 3507.993   0.466
+age            0.010     0.011     0.911  921.333   0.362
+diabetesYes   -0.064     0.277    -0.232  527.735   0.817
+smokingYes    -0.013     0.289    -0.046  608.823   0.963
+follow_up     -0.006     0.002    -3.226  717.530   0.001</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(syn_cart, <span class="fu">glm</span>(deceased <span class="sc">~</span> age <span class="sc">+</span> diabetes <span class="sc">+</span> smoking <span class="sc">+</span> follow_up, </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> binomial)) <span class="sc">|&gt;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>() <span class="sc">|&gt;</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">'term'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            estimate std.error statistic       df p.value
+(Intercept)   -1.002     0.835    -1.199 2079.279   0.231
+age            0.026     0.012     2.148 1714.220   0.032
+diabetesYes    0.168     0.293     0.575 2059.319   0.565
+smokingYes    -0.127     0.315    -0.403 1590.370   0.687
+follow_up     -0.012     0.002    -5.797 4203.502   0.000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">glm</span>(deceased <span class="sc">~</span> age <span class="sc">+</span> diabetes <span class="sc">+</span> smoking <span class="sc">+</span> follow_up, </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> binomial,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">data =</span> heart_failure) <span class="sc">|&gt;</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">'term'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            estimate std.error statistic p.value
+(Intercept)   -0.847     0.903    -0.937   0.349
+age            0.037     0.013     2.740   0.006
+diabetesYes    0.110     0.310     0.355   0.722
+smokingYes    -0.206     0.326    -0.631   0.528
+follow_up     -0.019     0.003    -7.486   0.000</code></pre>
+</div>
+</div>
+<p>The results obtained when using solely parametric methods deviate substantially from the results obtained on the original data. When using <code>CART</code>, the results are somewhat different, but are actually quite comparable. All coefficients are estimated with a similar sign, and the deviations from the <em>true</em> relationships are small compared to the standard errors.</p>
+<hr>
+</section>
+</section>
+</section>
+<section id="statistical-disclosure-control" class="level1">
+<h1>Statistical disclosure control</h1>
+<p>In general, synthetic data protects the privacy of participants quite well, especially when all cells are imputed. Even if some observations are partly reproduced, it is hard, if not impossible, to assess which part of an observations values are real, and which are fake. Hence, with respect to individuals little can be learned from synthetic data. However, it is always good to assess whether you are not accidentally releasing an actual observation in the synthetic data. Even though an attacker is not likely to find out, participants being able to “identify” themselves in the synthetic data set may result in trust problems in the future.</p>
+<p><strong>17. Append the original data to the synthetic data, and check whether some of the observations in the original data also occur in the synthetic data.</strong></p>
+<p><em>Hint 1:</em> You do not have to do this for the data generated with parametric methods, because these do not reproduce the original values, at least not for the continuous variables.</p>
+<p><em>Hint 2:</em> Start with the synthetic data, remove the variables .imp and .id, and append the original data to it. Subsequently, you can use duplicated() and which() to check whether (and if so, which) observations occur repeatedly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">complete</span>(syn_cart, <span class="st">"long"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.imp, .id)) <span class="sc">%&gt;%</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(heart_failure) <span class="sc">%&gt;%</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  duplicated <span class="sc">%&gt;%</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">which</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>integer(0)</code></pre>
+</div>
+</div>
+<p>None of observations occur repeatedly, so we have not accidentally copied any of the “true” observations into the synthetic sets. This provides some safeguard against accidentally releasing sensitive information. However, if the data contains really sensitive information, this might not be enough, and one could for example check whether the synthetic data differs from the observed data along multiple dimensions (i.e., variables). Such additional checks depend on the problem at hand. Additionally, one might want to take additional measures against accidentally disclosing information about observations, for example by drawing some of the variables from a parametric distribution. Even before distribution synthetic data, think wisely about whether there may remain any disclosure risks with respect to the data that will be distributed.</p>
+</section>
+<section id="inferences-from-synthetic-data" class="level1">
+<h1>Inferences from synthetic data</h1>
+<p>Lastly, when you have obtained a synthetic data set and want to make inferences from this set, you have to be careful, because generating synthetic data adds variance to the already present sampling variance that you take into account when evaluating hypotheses. Specifically, if you want to make inferences with respect to the sample of original observations, you can use unaltered analysis techniques and corresponding, conventional standard errors.</p>
+<p>However, if you want to inferences with respect to the population the sample is taken from, you will have to adjust the standard errors, to account for the fact that the synthesis procedure adds additional variance. The amount of variance that is added, depends on the number of synthetic data sets that are generated. Intuitively, when generating multiple synthetic data sets, the additional random noise that is induced by the synthesis cancels out, making the parameter estimates more stable.</p>
+<p>To make valid inferences, you can use the combining rules presented by <span class="citation" data-cites="reiter_partially_inference_2003">Reiter (<a href="#ref-reiter_partially_inference_2003" role="doc-biblioref">2003</a>)</span>. For scalar <span class="math inline">\(Q\)</span>, with <span class="math inline">\(q^{(i)}\)</span> and <span class="math inline">\(u^{(i)}\)</span> the point estimate and the corresponding variance estimate in synthetic data set <span class="math inline">\(D^{(i)}\)</span> for <span class="math inline">\(i = 1, \dots, m\)</span>, the following quantities are needed for inferences:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\bar{q}_m &amp;= \sum_{i=1}^m \frac{q^{(i)}}{m}, \\
+b_m &amp;= \sum_{i=1}^m \frac{(q^{(i)} - \bar{q}_m)}{m-1}, \\
+\bar{u}_m &amp;= \sum_{i=1}^m \frac{u^{(i)}}{m}.
+\end{aligned}
+\]</span></p>
+<p>The analyst can use <span class="math inline">\(\bar{q}_m\)</span> to estimate <span class="math inline">\(Q\)</span> and</p>
+<p><span class="math display">\[
+T_p = \frac{b_m}{m} + \bar{u}_m
+\]</span></p>
+<p>to estimate the variance of <span class="math inline">\(\bar{q}_m\)</span>. Then, <span class="math inline">\(\frac{b_m}{m}\)</span> is the correction factor for the additional variance due to using a finite number of imputations.</p>
+<p>When using <code>pool(..., rule = "reiter2003")</code>, the correct pooling rules are used automatically.</p>
 
 </section>
 
@@ -1151,14 +1523,17 @@ div.csl-indent {
 <div id="ref-tanvir_heart_failure_2017" class="csl-entry" role="doc-biblioentry">
 Ahmad, Assia AND Bhatti, Tanvir AND Munir. 2017. <span>“Survival Analysis of Heart Failure Patients: A Case Study.”</span> <em>PLOS ONE</em> 12 (7): 1–8. <a href="https://doi.org/10.1371/journal.pone.0181001">https://doi.org/10.1371/journal.pone.0181001</a>.
 </div>
-<div id="ref-magrittr" class="csl-entry" role="doc-biblioentry">
-Bache, Stefan Milton, and Hadley Wickham. 2022. <em>Magrittr: A Forward-Pipe Operator for r</em>. <a href="https://CRAN.R-project.org/package=magrittr">https://CRAN.R-project.org/package=magrittr</a>.
-</div>
 <div id="ref-breiman_cart_1984" class="csl-entry" role="doc-biblioentry">
 Breiman, Leo, Jerome Friedman, Charles J Stone, and Richard A Olshen. 1984. <em>Classification and Regression Trees</em>. New York: CRC press. <a href="https://doi.org/10.1201/9781315139470">https://doi.org/10.1201/9781315139470</a>.
 </div>
 <div id="ref-chicco_ml_2020" class="csl-entry" role="doc-biblioentry">
 Chicco, Davide, and Giuseppe Jurman. 2020. <span>“Machine Learning Can Predict Survival of Patients with Heart Failure from Serum Creatinine and Ejection Fraction Alone.”</span> <em>BMC Medical Informatics and Decision Making</em> 20 (1): 16. <a href="https://doi.org/10.1186/s12911-020-1023-5">https://doi.org/10.1186/s12911-020-1023-5</a>.
+</div>
+<div id="ref-drechsler_utility_psd" class="csl-entry" role="doc-biblioentry">
+Drechsler, Jörg. 2022. <span>“Challenges in&nbsp;Measuring Utility for&nbsp;Fully Synthetic Data.”</span> In <em>Privacy in Statistical Databases</em>, edited by Josep Domingo-Ferrer and Maryline Laurent, 220–33. Cham: Springer International Publishing. <a href="https://doi.org/10.1007/978-3-031-13945-1_16">https://doi.org/10.1007/978-3-031-13945-1_16</a>.
+</div>
+<div id="ref-purrr" class="csl-entry" role="doc-biblioentry">
+Henry, Lionel, and Hadley Wickham. 2022. <em>Purrr: Functional Programming Tools</em>. <a href="https://CRAN.R-project.org/package=purrr">https://CRAN.R-project.org/package=purrr</a>.
 </div>
 <div id="ref-iveware" class="csl-entry" role="doc-biblioentry">
 <span>“<span>IVE</span>ware: Imputation and Variance Estimation Software.”</span> n.d. <a href="https://www.src.isr.umich.edu/wp-content/uploads/iveware-manual-Version-0.3.pdf">https://www.src.isr.umich.edu/wp-content/uploads/iveware-manual-Version-0.3.pdf</a>.
@@ -1169,6 +1544,12 @@ Nowok, Beata, Gillian M. Raab, and Chris Dibben. 2016. <span>“<span class="noc
 <div id="ref-ggmice" class="csl-entry" role="doc-biblioentry">
 Oberman, Hanne. 2022. <em>Ggmice: Visualizations for ’Mice’ with ’Ggplot2’</em>. <a href="https://CRAN.R-project.org/package=ggmice">https://CRAN.R-project.org/package=ggmice</a>.
 </div>
+<div id="ref-patchwork" class="csl-entry" role="doc-biblioentry">
+Pedersen, Thomas Lin. 2022. <em>Patchwork: The Composer of Plots</em>. <a href="https://CRAN.R-project.org/package=patchwork">https://CRAN.R-project.org/package=patchwork</a>.
+</div>
+<div id="ref-reiter_partially_inference_2003" class="csl-entry" role="doc-biblioentry">
+Reiter, Jerome P. 2003. <span>“Inference for Partially Synthetic, Public Use Microdata Sets.”</span> <em>Survey Methodology</em> 29 (2): 181–88.
+</div>
 <div id="ref-psych" class="csl-entry" role="doc-biblioentry">
 Revelle, William. 2022. <em>Psych: Procedures for Psychological, Psychometric, and Personality Research</em>. Evanston, Illinois: Northwestern University. <a href="https://CRAN.R-project.org/package=psych">https://CRAN.R-project.org/package=psych</a>.
 </div>
@@ -1177,6 +1558,9 @@ van Buuren, Stef, and Karin Groothuis-Oudshoorn. 2011. <span>“<span class="noc
 </div>
 <div id="ref-volker_vink_synthetic_mice_2021" class="csl-entry" role="doc-biblioentry">
 Volker, Thom Benjamin, and Gerko Vink. 2021. <span>“Anonymiced Shareable Data: Using Mice to Create and Analyze Multiply Imputed Synthetic Datasets.”</span> <em>Psych</em> 3 (4): 703–16. <a href="https://doi.org/10.3390/psych3040045">https://doi.org/10.3390/psych3040045</a>.
+</div>
+<div id="ref-ggplot2" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley. 2016. <em>Ggplot2: Elegant Graphics for Data Analysis</em>. Springer-Verlag New York. <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>.
 </div>
 </div></section></div></main>
 <!-- /main column -->
