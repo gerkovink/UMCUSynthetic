@@ -1,0 +1,42 @@
+---
+title: "Markup Languages etc.."
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: scroll
+    self_contained: false
+---
+
+# Intro {.sidebar}
+This dashboard covers the course materials for the **Generating Synthetic Data with `mice`** workshop
+
+---
+
+<center>
+<a href='https://github.com/amices/mice/raw/master/man/figures/MICE_sticker_SMALL.png'><img src='https://github.com/amices/mice/raw/master/man/figures/MICE_sticker_SMALL.png' height="139" /></a>
+</center>
+
+---
+
+Instructors: <br> [Thom Volker](https://thomvolker.github.io) <br> [Gerko Vink](https://www.gerkovink.com) <br>
+
+---
+
+
+| *  |  #   |
+|:--------|:-----|
+|   When? | **Nov 4, 2022** | 
+| Where? |  BOL 1.082 | 
+|  Start | 9 am | 
+
+---
+
+# November 4, 2022
+
+## Materials
+
+### Today's materials
+You can find the lecture slides here:
+
+-   [Lecture](Lecture.html)
+-   [Practical](UMCUSynthetic.html)
