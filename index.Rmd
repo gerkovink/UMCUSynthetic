@@ -1,5 +1,5 @@
 ---
-title: "Markup Languages etc.."
+title: "Synthemice your data"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -38,3 +38,4 @@ You can find the lecture slides here:
 
 -   [Lecture](Lecture.html)
 -   [Practical](UMCUSynthetic.html)
+
