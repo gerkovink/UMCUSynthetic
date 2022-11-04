@@ -22,10 +22,8 @@ Instructors: <br> [Thom Volker](https://thomvolker.github.io) <br> [Gerko Vink](
 
 ---
 
-
-| *  |  #   |
-|:--------|:-----|
 |   When? | **Nov 4, 2022** | 
+|:--------|:-----|
 | Where? |  BOL 1.082 | 
 |  Start | 9 am | 
 
