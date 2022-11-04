@@ -36,7 +36,7 @@ library(ggplot2)   # required when using ggmice
 library(patchwork) # to stitch multiple figures together
 library(psych)     # to obtain descriptive statistics
 library(purrr)     # to work with multiply imputed synthetic datasets
-library(synthpop)
+library(synthpop)  # to assess the utility of our synthetic data
 ```
 
 Additionally, make sure to set a seed, so that your results can be compared with our results.
@@ -285,7 +285,7 @@ _Hint 1:_ Within `ggmice`, set `mapping = aes(x = VARIABLE, group = .imp)`, and 
 _Hint 2:_ You can map over all categorical variables by creating a vector with the column names of all categorical variables, and using `purrr::map()` in combination with `aes_string()` and `patchwork::wrap_plots()`. 
 
 ```{r}
-colnames(heart_failure)[sapply(heart_failure, is.factor)] %>%
+colnames(heart_failure)[map_lgl(heart_failure, is.factor)] %>%
   map(~ ggmice(syn_param, mapping = aes_string(.x, group = '.imp')) +
         geom_bar(mapping = aes(y = ..prop..),
                  position = position_dodge2(),
@@ -307,7 +307,7 @@ __7. Create a density plot for each continuous variable with `ggmice()`, mapping
 _Hint:_ The code `ggmice(syn, mapping = aes(x = VARIABLE, group = .imp))` creates a `ggmice` object per imputed set.
 
 ```{r}
-colnames(heart_failure)[sapply(heart_failure, is.numeric)] %>%
+colnames(heart_failure)[map_lgl(heart_failure, is.numeric)] %>%
   map(~ ggmice(data = syn_param, 
                mapping = aes_string(x = .x, group = '.imp')) +
         geom_density(show.legend = F)) %>%
@@ -342,7 +342,7 @@ For now, we will skip looking at the synthetic data, and continue directly to a 
 __9. Create a bar plot using `geom_bar()` for each categorical variable in the data, mapping these variables to the `x`-axis with one bar per category per imputed data set.__
 
 ```{r}
-colnames(heart_failure)[sapply(heart_failure, is.factor)] %>%
+colnames(heart_failure)[map_lgl(heart_failure, is.factor)] %>%
   map(~ ggmice(syn_cart, mapping = aes_string(.x, group = '.imp')) +
         geom_bar(mapping = aes(y = ..prop..),
                  position = position_dodge2(),
@@ -363,7 +363,7 @@ __10. Create a density plot for each continuous variable with `ggmice()`, mappin
 
 
 ```{r}
-colnames(heart_failure)[sapply(heart_failure, is.numeric)] %>%
+colnames(heart_failure)[map_lgl(heart_failure, is.numeric)] %>%
   map(~ ggmice(data = syn_cart, 
                mapping = aes_string(x = .x, group = '.imp')) +
         geom_density(show.legend = F)) %>%
