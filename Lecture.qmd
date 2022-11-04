@@ -1,0 +1,491 @@
+---
+title: "Synthetic data generation with `mice`"
+author: 
+  - name: Gerko Vink
+    orcid: 0000-0001-9767-1924
+    email: g.vink@uu.nl
+    affiliations:
+      - name: Utrecht University
+  - name: Thom Volker
+    orcid: 0000-0002-2408-7820
+    email: t.b.volker@uu.nl
+    affiliations:
+      - name: Utrecht University
+institute: Methodology & Statistics @ Utrecht University
+date: November 4, 2022
+format: 
+  revealjs:
+    theme: [solarized, gerko.scss]
+    progress: true
+    margin: 0.075
+    logo: logo.png 
+    toc: true
+    toc-depth: 1
+    toc-title: Outline
+    slide-number: true
+    scrollable: false
+    width: 1200
+    reference-location: margin
+    footer: Gerko Vink and Thom Volker
+---
+
+## Disclaimer
+
+I owe a debt of gratitude to many people as the thoughts and teachings in my slides are the process of years-long development cycles and discussions with my team, friends, colleagues and peers. When someone has contributed to the content of the slides, I have credited their authorship.
+
+When external figures and other sources are shown:
+
+1)  the references are included when the origin is known, or
+2)  the objects are directly linked from within the public domain and the source can be obtained by right-clicking the objects.
+
+Scientific references are in the footer. 
+
+Opinions are my own.
+<br><br><br><br>
+Packages used:
+```{r echo=TRUE}
+library(mice)
+library(dplyr)
+library(magrittr)
+library(purrr)
+set.seed(123)
+```
+
+# Vocabulary
+
+## Terms I may use
+
+-   TDGM: True data generating model
+-   DGP: Data generating process, closely related to the TDGM, but with all the wacky additional uncertainty
+-   Truth: The comparative truth that we are interested in
+-   Bias: The distance to the comparative truth
+-   Variance: When not everything is the same
+-   Estimate: Something that we calculate or guess
+-   Estimand: The thing we aim to estimate and guess
+-   Population: That larger entity without sampling variance
+-   Sample: The smaller thing with sampling variance
+-   Incomplete: There exists a more complete version, but we don't have it
+-   Observed: What we have
+-   Unobserved: What we would also like to have
+
+# Statistical inference
+
+## At the start
+
+We begin today with an exploration into statistical inference.
+
+<center>
+**Statistical inference is the process of drawing conclusions from truths **
+</center>
+
+Truths are boring, but they are convenient.
+
+-   however, for most problems truths require a lot of calculations, tallying or a complete census.
+-   therefore, a proxy of the truth is in most cases sufficient
+-   An example for such a proxy is a **sample**
+-   Samples are widely used and have been for a long time[^1]
+
+[^1]: See [Jelke Bethlehem's CBS discussion paper](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjkyPTCs4L3AhUCuKQKHUpmBvIQFnoECAMQAw&url=https%3A%2F%2Fwww.cbs.nl%2F-%2Fmedia%2Fimported%2Fdocuments%2F2009%2F07%2F2009-15-x10-pub.pdf&usg=AOvVaw3BpUW2s_k0MB5yH1o-QGf2) for an overview of the history of sampling within survey
+
+## Being wrong about the truth
+
+::: columns
+::: {.column width="40%"}
+![](img/2.%20missingness_problem.png){width="90%"}
+:::
+
+::: {.column width="60%"}
+-   The population is the truth
+-   The sample comes from the population, but is generally smaller in size
+-   This means that not all cases from the population can be in our sample
+-   If not all information from the population is in the sample, then our sample may be *wrong* <br><br><br> Q1: Why is it important that our sample is not wrong?<br> Q2: How do we know that our sample is not wrong?
+:::
+:::
+
+## Solving the missingness problem
+
+::: columns
+::: {.column width="40%"}
+![](img/3.%20random_sampling.png){width="90%"}
+:::
+
+::: {.column width="60%"}
+-   There are many flavours of sampling
+-   If we give every unit in the population the same probability to be sampled, we do **random sampling**
+-   The convenience with random sampling is that the missingness problem can be ignored
+-   The missingness problem would in this case be: **not every unit in the population has been observed in the sample**
+
+<br> Q3: Would that mean that if we simply observe every potential unit, we would be unbiased about the truth?
+:::
+:::
+
+## Sidestep
+
+::: columns
+::: {.column width="50%"}
+![](img/4.%20sidestep1.png){width="90%"}
+:::
+
+::: {.column width="50%"}
+-   The problem is a bit larger
+
+-   We have three entities at play, here:
+
+    1.  The truth we're interested in
+    2.  The proxy that we have (e.g. sample)
+    3.  The model that we're running
+
+-   The more features we use, the more we capture about the outcome for the cases in the data
+:::
+:::
+
+## Sidestep
+
+::: columns
+::: {.column width="50%"}
+![](img/4.%20sidestep1.png){width="90%"}
+:::
+
+::: {.column width="50%"}
+-   The more cases we have, the more we approach the true information
+
+All these things are related to uncertainty. Our model can still yield biased results when fitted to $\infty$ features. Our inference can still be wrong when obtained on $\infty$ cases.
+:::
+:::
+
+## Sidestep
+
+![](img/5.%20sidestep2.png){width="90%"}
+
+**Core assumption: all observations are bonafide**
+
+# Uncertainty
+
+## Uncertainty simplified
+
+::: columns
+::: {.column width="60%"}
+![](img/6.%20Sample_uncertainty.png){width="90%"}
+:::
+
+::: {.column width="40%"}
+When we do not have all information:
+
+1.  We need to accept that we are probably wrong
+2.  We just have to quantify how wrong we are
+
+In some cases we estimate that we are only a bit wrong. In other cases we estimate that we could be very wrong. This is the purpose of testing.
+
+The uncertainty measures about our estimates can be used to create intervals
+:::
+:::
+
+## Confidence intervals
+
+::: columns
+::: {.column width="60%"}
+![](img/7.%20confidence_intervals.png){width="90%"}
+:::
+
+::: {.column width="40%"}
+Confidence intervals can be hugely informative!
+
+If we sample 100 samples from a population, then a *95% CI* will cover the population value **at least** 95 out of 100 times.
+
+-   If the coverage $<95$: bad estimation process with risk of errors and invalid inference
+
+-   If the coverage $\geq 95$: inefficient estimation process, but correct conclusions and valid inference. Lower statistical power.
+:::
+:::
+
+# Being wrong may help
+
+## The holy trinity
+
+Whenever I evaluate something, I tend to look at three things:
+
+-   bias (how far from the truth)
+-   uncertainty/variance (how wide is my interval)
+-   coverage (how often do I cover the truth with my interval)
+
+As a function of model complexity in specific modeling efforts, these components play a role in the bias/variance tradeoff
+
+<center>![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Bias_and_variance_contributing_to_total_error.svg/2560px-Bias_and_variance_contributing_to_total_error.svg.png){width="50%"}</center>
+
+# Hello, dark data
+
+![](img/dd.jpg){width=75%}
+
+## Let's do it again with missingness
+
+::: columns
+::: {.column width="30%"}
+![](img/9.missingness.png){width="60%"}
+:::
+
+::: {.column width="70%"}
+We now have a new problem:
+
+-   we do not have the whole truth; but merely a sample of the truth
+-   we do not even have the whole sample, but merely a sample of the sample of the truth.
+
+Q4. What would be a simple solution to allowing for valid inferences on the incomplete sample? <br> Q5. Would that solution work in practice?
+:::
+:::
+
+## Let's do it again with missingness
+
+::: columns
+::: {.column width="30%"}
+![](img/10.%20missingness_simplified.png){width="68%"}
+:::
+
+::: {.column width="70%"}
+We now have a new problem:
+
+-   we do not have the whole truth; but merely a sample of the truth
+-   we do not even have the whole sample, but merely a sample of the sample of the truth.
+
+Q4. What would be a simple solution to allowing for valid inferences on the incomplete sample? <br> Q5. Would that solution work in practice?
+:::
+:::
+
+## Multiple imputation
+
+::: columns
+::: {.column width="60%"}
+![](img/11.%20missingness_solved.png){width="80%"}
+:::
+
+::: {.column width="40%"}
+There are two sources of uncertainty that we need to cover:
+
+1.  **Uncertainty about the missing value**:<br>when we don't know what the true observed value should be, we must create a distribution of values with proper variance (uncertainty).
+2.  **Uncertainty about the sampling**:<br>nothing can guarantee that our sample is the one true sample. So it is reasonable to assume that the parameters obtained on our sample are biased.
+
+**More challenging if the sample does not randomly come from the population or if the feature set is too limited to solve for the substantive model of interest**
+:::
+:::
+
+# Embrace the darkness
+
+## Now how do we know we did well?
+
+I'm really sorry, but:
+
+::: notepaper
+<figure class="quote">
+<blockquote class="curly-quotes" cite="https://www.youtube.com/watch?v=qYLrc9hy0t0">
+<font color="black"> We don't. In practice we may often lack the necessary comparative truths! </font>
+</blockquote>
+</figure>
+:::
+
+For example:
+
+1.  Predict a future response, but we only have the past
+2.  Analyzing incomplete data without a reference about the truth
+3.  Estimate the effect between two things that can never occur together
+4.  Mixing bonafide observations with bonafide non-observations
+
+## What is the goal of multiple imputation?
+
+The goal:
+
+- **IS NOT** to find the correct value for a missing data point
+- **IS** to find an answer to the analysis problem, given that there are (many) data points missing.
+
+We are not interested in whether the imputed value corresponds to its true counterpart in the population, but we rather sample plausible values that could have been from the posterior predictive distribution
+
+## Demonstration of imputation
+
+Let our analysis model be
+
+```{r echo = TRUE, eval = FALSE}
+boys %$% 
+  lm(hgt ~ age + tv)
+```
+
+with output
+
+```{r}
+boys %$% 
+  lm(hgt ~ age + tv) %>% 
+  summary()
+```
+
+generated on `r boys %$%    lm(hgt ~ age + tv) %>% nobs()` cases. The full data size is
+
+```{r}
+boys %>% dim()
+```
+
+## Demonstration of imputation
+To impute and analyze the same model with `mice`, we can simply run:
+
+```{r echo = TRUE, cache = TRUE}
+boys %>% 
+  mice(m = 5, method = "cart", printFlag = FALSE) %>% 
+  complete("all") %>% 
+  map(~.x %$% lm(hgt ~ age + tv)) %>% 
+  pool() %>% 
+  summary()
+```
+<center>
+![](img/imp_process.png){width="60%"}
+</center>
+
+## What have we done?
+We have used `mice` to obtain draws from a posterior predictive distribution of the missing data, conditional on the observed data. 
+
+The imputed values are mimicking the sampling variation and can be used to infer about the underlying TDGM, **if and only if**:
+
+- The observed data holds the information about the missing data (MAR/MCAR)
+
+# Synthetic data generation
+
+## Imputation vs Synthetisation
+Instead of drawing only imputations from the posterior predictive distribution, we might as well overimpute the observed data. 
+![](img/patterns.png)
+
+## How to draw synthetic data sets with `mice`
+```{r echo = TRUE, cache = TRUE}
+boys %>% 
+  mice(m = 5, method = "cart", printFlag = FALSE, where = matrix(TRUE, 748, 9)) %>% 
+  complete("all") %>% 
+  map(~.x %$% lm(hgt ~ age + tv)) %>% 
+  pool() %>% 
+  summary()
+```
+<center>
+![](img/synth_process.png){width="60%"}
+</center>
+But we make an error!
+
+## Pooling in imputation
+Rubin (1987, p76) defined the following rules:
+
+For any number of multiple imputations $m$, the combination of the analysis results for any estimate $\hat{Q}$ of estimand $Q$ with corresponding variance $U$, can be done in terms of the average of the $m$ complete-data estimates
+
+$$\bar{Q} = \sum_{l=1}^{m}\hat{Q}_l / m,$$
+
+and the corresponding average of the $m$ complete data variances
+
+$$\bar{U} = \sum_{l=1}^{m}{U}_l / m.$$ 
+
+::: footer
+Rubin, D.B. (1987). Multiple Imputation for Nonresponse in Surveys. New York: John Wiley and Sons.
+:::
+
+## Pooling in imputation
+Simply using $\bar{Q}$ and $\bar{U}_m$ to obtain our inferences would be to simplistic. In that case we would ignore any possible variation between the separate $\hat{Q}_l$ and the fact that we only generate a finite set of imputations $m$. Rubin (1987, p. 76) established that the total variance $T$ of $(Q-\bar{Q})$ would equal
+
+$$T = \bar{U} + B + B/m,$$
+
+Where the between imputation variance $B$ is defined as 
+
+$$B = \sum_{l=1}^{m}(\hat{Q}_l - \bar{Q})^\prime(\hat{Q}_l - \bar{Q}) / (m-1)$$
+
+**This assumes that some of the data are observed and remain constant over the synthetic sets**
+
+The total variance $T$ of $(Q-\bar{Q})$ should (Reiter, 2003) equal
+
+$$T = \bar{U} + B/m.$$
+
+::: footer
+Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.
+:::
+
+## So, the correct code is 
+```{r echo = TRUE, cache = TRUE}
+boys %>% 
+  mice(m = 5, method = "cart", printFlag = FALSE, where = matrix(TRUE, 748, 9)) %>% 
+  complete("all") %>% 
+  map(~.x %$% lm(hgt ~ age + tv)) %>% 
+  pool(rule = "reiter2003") %>% 
+  summary()
+```
+
+## Why multiple synthetic sets?
+Thank back about the goal of statistical inference: we want to go back to the true data generating model.
+
+1. We do so by reverse engineering the true data generating process
+2. Based on our observed data
+3. We do not know this process; hence multiple synthetic values
+
+The multiplicity of the solution allows for smoothing over any Monte Carlo error that may arise from generating a single set.
+
+## Generating more synthetic data
+```{r echo = TRUE, cache = TRUE}
+mira <- boys %>% 
+  mice(m = 6, method = "cart", printFlag = FALSE, where = matrix(TRUE, 748, 9)) %>% 
+  list('1' = rbind(complete(., 1), complete(., 2)),
+       '2' = rbind(complete(., 3), complete(., 4)),
+       '3' = rbind(complete(., 5), complete(., 6))) %>% .[-1] %>% 
+  data.table::setattr("class", c("mild", class(.))) %>% 
+  map(~.x %$% lm(hgt ~ reg))
+
+mira %>% pool(rule = "reiter2003") %>% 
+  summary() %>% tibble::column_to_rownames("term") %>% round(3)
+
+mira %>% pool(rule = "reiter2003", 
+              custom.t = ".data$ubar * 2 + .data$b / .data$m") %>% 
+  summary() %>% tibble::column_to_rownames("term") %>% round(3)
+```
+Some adjustment to the pooling rules is neede to avoid p-inflation.
+
+::: footer
+Raab, Gillian M, Beata Nowok, and Chris Dibben. 2018. “Practical Data Synthesis for Large Samples”. Journal of Privacy and Confidentiality 7 (3):67-97. [https://doi.org/10.29012/jpc.v7i3.407.](https://doi.org/10.29012/jpc.v7i3.407)
+:::
+
+## Some care is needed
+With synthetic data generation and synthetic data implementation come some risks. 
+
+Any idea?
+
+# What should synthetic data be?
+
+## Testing validity
+Nowadays many synthetic data cowboys claim that they can generate synthetic data that looks like the real data that served as input. 
+
+This is like going to Madam Tusseaud's: at face value it looks identical, but when experienced in real life it's just not the same as the living thing. 
+
+Many of these synthetic data packages only focus on marginal or conditional distributions. With `mice` we also consider the inferential properties of the synthetic data. 
+
+In general, we argue [^4] that any synthetic data generation procedure should
+
+1. Preserve marginal distributions
+2. Preserve conditional distribution
+3. Yield valid inference
+4. Yield synthetic data that are indistinguishable from the real data
+
+
+::: footer
+Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. [https://doi.org/10.3390/psych3040045](https://doi.org/10.3390/psych3040045)
+:::
+
+## Example from simulation
+When valid synthetic data are generated, the variance of the estimates is correct, such that the confidence intervals cover the population (i.e. true) value sufficiently [^5]. Take e.g. the following proportional odds model from Volker & Vink (2021):
+
+|        term | estimate | synthetic <br> bias   | synthetic <br> cov   |
+|-------------|---------:|-------:|------:|
+| age         | 0.461    | 0.002  | 0.939 |
+| hc          | -0.188   | -0.004 | 0.945 |
+| regeast     | -0.339   | 0.092  | 0.957 |
+| regwest     | 0.486    | -0.122 | 0.944 |
+| regsouth    | 0.646    | -0.152 | 0.943 |
+| regcity     | -0.069   | 0.001  | 0.972 |
+| G1$|$G2     | -6.322   | -0.254 | 0.946 |
+| G2$|$G3     | -4.501   | -0.246 | 0.945 |
+| G3$|$G4     | -3.842   | -0.244 | 0.948 |
+| G4$|$G5     | -2.639   | -0.253 | 0.947 |
+ 
+::: footer
+Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. [https://doi.org/10.3390/psych3040045](https://doi.org/10.3390/psych3040045)
+:::
+
+## End of presentation
+
+<center>
+![A. Bacall](https://imgc.allpostersimages.com/img/posters/scientist-sits-at-computer-that-has-a-thought-balloon-over-it-that-reads-cartoon_u-L-PGPH660.jpg?artHeight=900&artPerspective=n&artWidth=900){width="60%"}
+</center>
