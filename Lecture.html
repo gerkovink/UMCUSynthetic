@@ -9,6 +9,9 @@
 <link href="Lecture_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.1.189">
 
+  <meta name="author" content="Gerko Vink">
+  <meta name="author" content="Thom Volker">
+  <meta name="dcterms.date" content="2022-11-04">
   <title>Synthetic data generation with mice</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -388,109 +391,27 @@
 
 <section id="title-slide" class="center">
   <h1 class="title">Synthetic data generation with <code>mice</code></h1>
+  <p class="author">Gerko Vink</p>
+  <p class="author">Thom Volker</p>
+  <p class="institute">Methodology &amp; Statistics @ Utrecht University</p>
+  <p class="date">November 4, 2022</p>
+</section>
+<section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Outline</h2>
+<ul>
+<li><a href="#/vocabulary" id="/toc-vocabulary">Vocabulary</a></li>
+<li><a href="#/statistical-inference" id="/toc-statistical-inference">Statistical inference</a></li>
+<li><a href="#/uncertainty" id="/toc-uncertainty">Uncertainty</a></li>
+<li><a href="#/being-wrong-may-help" id="/toc-being-wrong-may-help">Being wrong may help</a></li>
+<li><a href="#/hello-dark-data" id="/toc-hello-dark-data">Hello, dark data</a></li>
+<li><a href="#/embrace-the-darkness" id="/toc-embrace-the-darkness">Embrace the darkness</a></li>
+<li><a href="#/synthetic-data-generation" id="/toc-synthetic-data-generation">Synthetic data generation</a></li>
+<li><a href="#/what-should-synthetic-data-be" id="/toc-what-should-synthetic-data-be">What should synthetic data be?</a></li>
+</ul>
+</nav>
 </section>
 
-<section class="slide level2">
-
-<style>
-
-.notepaper {
-  position: relative;
-  margin: 30px auto;
-  padding: 29px 20px 20px 45px;
-  width: 800px;
-  line-height: 30px;
-  color: #6a5f49;
-  text-shadow: 0 1px 1px ;
-  background-color: #f2f6c1;
-  background-image: -webkit-radial-gradient(center, cover, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 90%), -webkit-repeating-linear-gradient(top, transparent 0%, transparent 29px, rgba(239, 207, 173, 0.7) 29px, rgba(239, 207, 173, 0.7) 30px);
-  background-image: -moz-radial-gradient(center, cover, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 90%), -moz-repeating-linear-gradient(top, transparent 0%, transparent 29px, rgba(239, 207, 173, 0.7) 29px, rgba(239, 207, 173, 0.7) 30px);
-  background-image: -o-radial-gradient(center, cover, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 90%), -o-repeating-linear-gradient(top, transparent 0%, transparent 29px, rgba(239, 207, 173, 0.7) 29px, rgba(239, 207, 173, 0.7) 30px);
-  border: 1px solid #c3baaa;
-  border-color: rgba(195, 186, 170, 0.9);
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), inset 0 0 5px #d8e071, 0 0 1px rgba(0, 0, 0, 0.1), 0 2px rgba(0, 0, 0, 0.02);
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), inset 0 0 5px #d8e071, 0 0 1px rgba(0, 0, 0, 0.1), 0 2px rgba(0, 0, 0, 0.02);
-}
-
-.notepaper:before, .notepaper:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-
-.notepaper:before {
-  left: 28px;
-  width: 2px;
-  border: solid #efcfad;
-  border-color: rgba(239, 207, 173, 0.9);
-  border-width: 0 1px;
-}
-
-.notepaper:after {
-  z-index: -1;
-  left: 0;
-  right: 0;
-  background: rgba(242, 246, 193, 0.9);
-  border: 1px solid rgba(170, 157, 134, 0.7);
-  -webkit-transform: rotate(2deg);
-  -moz-transform: rotate(2deg);
-  -ms-transform: rotate(2deg);
-  -o-transform: rotate(2deg);
-  transform: rotate(2deg);
-}
-
-.quote {
-  font-family: Georgia, serif;
-  font-size: 14px;
-}
-
-.curly-quotes:before, .curly-quotes:after {
-  display: inline-block;
-  vertical-align: top;
-  height: 30px;
-  line-height: 48px;
-  font-size: 50px;
-  opacity: .2;
-}
-
-.curly-quotes:before {
-  content: '\201C';
-  margin-right: 4px;
-  margin-left: -8px;
-}
-
-.curly-quotes:after {
-  content: '\201D';
-  margin-left: 4px;
-  margin-right: -8px;
-}
-
-.quote-by {
-  display: block;
-  padding-right: 10px;
-  text-align: right;
-  font-size: 13px;
-  font-style: italic;
-  color: #84775c;
-}
-
-.lt-ie8 .notepaper {
-  padding: 15px 25px;
-}
-
-div.footnotes {
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 70px;
-  width: 80%;
-  font-size: 0.6em;
-}
-</style>
-</section>
 <section id="disclaimer" class="slide level2">
 <h2>Disclaimer</h2>
 <p>I owe a debt of gratitude to many people as the thoughts and teachings in my slides are the process of years-long development cycles and discussions with my team, friends, colleagues and peers. When someone has contributed to the content of the slides, I have credited their authorship.</p>
@@ -499,20 +420,14 @@ div.footnotes {
 <li>the references are included when the origin is known, or</li>
 <li>the objects are directly linked from within the public domain and the source can be obtained by right-clicking the objects.</li>
 </ol>
-<p>Opinions are my own.</p>
-</section>
-<section id="this-meeting" class="slide level2">
-<h2>This meeting</h2>
-<ol type="1">
-<li>Some vocabulary</li>
-<li>Statistical inference</li>
-<li>Confidence intervals</li>
-<li>Missing data</li>
-<li>Synthetic data</li>
-<li>synthetic data generation with mice</li>
-</ol>
+<p>Scientific references are in the footer.</p>
+<p>Opinions are my own. <br><br><br><br> Packages used:</p>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(mice)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section>
@@ -545,13 +460,9 @@ div.footnotes {
 <section id="at-the-start" class="slide level2">
 <h2>At the start</h2>
 <p>We begin today with an exploration into statistical inference.</p>
-<div class="notepaper">
-<figure class="quote">
-<blockquote class="curly-quotes" cite="https://www.youtube.com/watch?v=qYLrc9hy0t0">
-<font color="black"> Statistical inference is the process of drawing conclusions from truths </font>
-</blockquote>
-</figure>
-</div>
+<center>
+<strong>Statistical inference is the process of drawing conclusions from truths </strong>
+</center>
 <p>Truths are boring, but they are convenient.</p>
 <ul>
 <li>however, for most problems truths require a lot of calculations, tallying or a complete census.</li>
@@ -559,7 +470,7 @@ div.footnotes {
 <li>An example for such a proxy is a <strong>sample</strong></li>
 <li>Samples are widely used and have been for a long time<sup>1</sup></li>
 </ul>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.</p></li></ol></aside></section>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>See <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;ved=2ahUKEwjkyPTCs4L3AhUCuKQKHUpmBvIQFnoECAMQAw&amp;url=https%3A%2F%2Fwww.cbs.nl%2F-%2Fmedia%2Fimported%2Fdocuments%2F2009%2F07%2F2009-15-x10-pub.pdf&amp;usg=AOvVaw3BpUW2s_k0MB5yH1o-QGf2">Jelke Bethlehem’s CBS discussion paper</a> for an overview of the history of sampling within survey</p></li></ol></aside></section>
 <section id="being-wrong-about-the-truth" class="slide level2">
 <h2>Being wrong about the truth</h2>
 <div class="columns">
@@ -686,7 +597,7 @@ div.footnotes {
 <section id="hello-dark-data" class="title-slide slide level1 center">
 <h1>Hello, dark data</h1>
 
-</section>
+<img data-src="img/dd.jpg" style="width:75.0%" class="r-stretch"></section>
 <section id="lets-do-it-again-with-missingness" class="slide level2">
 <h2>Let’s do it again with missingness</h2>
 <div class="columns">
@@ -731,6 +642,11 @@ div.footnotes {
 <p><strong>More challenging if the sample does not randomly come from the population or if the feature set is too limited to solve for the substantive model of interest</strong></p>
 </div>
 </div>
+</section></section>
+<section>
+<section id="embrace-the-darkness" class="title-slide slide level1 center">
+<h1>Embrace the darkness</h1>
+
 </section>
 <section id="now-how-do-we-know-we-did-well" class="slide level2">
 <h2>Now how do we know we did well?</h2>
@@ -763,8 +679,8 @@ div.footnotes {
 <h2>Demonstration of imputation</h2>
 <p>Let our analysis model be</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>boys <span class="sc">%$%</span> </span>
-<span id="cb1-2"><a href="#cb1-2"></a>  <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>boys <span class="sc">%$%</span> </span>
+<span id="cb2-2"><a href="#cb2-2"></a>  <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>with output</p>
 <div class="cell">
@@ -802,12 +718,12 @@ F-statistic: 378.8 on 2 and 221 DF,  p-value: &lt; 2.2e-16</code></pre>
 <h2>Demonstration of imputation</h2>
 <p>To impute and analyze the same model with <code>mice</code>, we can simply run:</p>
 <div class="cell" data-hash="Lecture_cache/revealjs/unnamed-chunk-5_e12258deeabb4ff4b1be5221ed871d95">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>boys <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">complete</span>(<span class="st">"all"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-4"><a href="#cb4-4"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-5"><a href="#cb4-5"></a>  <span class="fu">pool</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb4-6"><a href="#cb4-6"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>boys <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="fu">complete</span>(<span class="st">"all"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="fu">pool</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         term   estimate  std.error  statistic        df      p.value
 1 (Intercept) 71.4996462 0.62149605 115.044409 735.07926 0.000000e+00
@@ -826,6 +742,11 @@ F-statistic: 378.8 on 2 and 221 DF,  p-value: &lt; 2.2e-16</code></pre>
 <ul>
 <li>The observed data holds the information about the missing data (MAR/MCAR)</li>
 </ul>
+</section></section>
+<section>
+<section id="synthetic-data-generation" class="title-slide slide level1 center">
+<h1>Synthetic data generation</h1>
+
 </section>
 <section id="imputation-vs-synthetisation" class="slide level2">
 <h2>Imputation vs Synthetisation</h2>
@@ -834,12 +755,12 @@ F-statistic: 378.8 on 2 and 221 DF,  p-value: &lt; 2.2e-16</code></pre>
 <section id="how-to-draw-synthetic-data-sets-with-mice" class="slide level2">
 <h2>How to draw synthetic data sets with <code>mice</code></h2>
 <div class="cell" data-hash="Lecture_cache/revealjs/unnamed-chunk-6_56e01d5c0081134552aca71ebe9514f3">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>boys <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>, <span class="at">where =</span> <span class="fu">matrix</span>(<span class="cn">TRUE</span>, <span class="dv">748</span>, <span class="dv">9</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3"></a>  <span class="fu">complete</span>(<span class="st">"all"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-4"><a href="#cb6-4"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-5"><a href="#cb6-5"></a>  <span class="fu">pool</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb6-6"><a href="#cb6-6"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>boys <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>, <span class="at">where =</span> <span class="fu">matrix</span>(<span class="cn">TRUE</span>, <span class="dv">748</span>, <span class="dv">9</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="fu">complete</span>(<span class="st">"all"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5"></a>  <span class="fu">pool</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         term   estimate std.error statistic       df      p.value
 1 (Intercept) 71.1914095 0.7962174 89.412020 43.37485 0.000000e+00
@@ -854,12 +775,15 @@ F-statistic: 378.8 on 2 and 221 DF,  p-value: &lt; 2.2e-16</code></pre>
 </section>
 <section id="pooling-in-imputation" class="slide level2">
 <h2>Pooling in imputation</h2>
-<p>Rubin (1987, p76)<sup>1</sup> defined the following rules:</p>
+<p>Rubin (1987, p76) defined the following rules:</p>
 <p>For any number of multiple imputations <span class="math inline">\(m\)</span>, the combination of the analysis results for any estimate <span class="math inline">\(\hat{Q}\)</span> of estimand <span class="math inline">\(Q\)</span> with corresponding variance <span class="math inline">\(U\)</span>, can be done in terms of the average of the <span class="math inline">\(m\)</span> complete-data estimates</p>
 <p><span class="math display">\[\bar{Q} = \sum_{l=1}^{m}\hat{Q}_l / m,\]</span></p>
 <p>and the corresponding average of the <span class="math inline">\(m\)</span> complete data variances</p>
 <p><span class="math display">\[\bar{U} = \sum_{l=1}^{m}{U}_l / m.\]</span></p>
-<aside><ol class="aside-footnotes"><li id="fn2"><p>Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.</p></li></ol></aside></section>
+<div class="footer">
+<p>Rubin, D.B. (1987). Multiple Imputation for Nonresponse in Surveys. New York: John Wiley and Sons.</p>
+</div>
+</section>
 <section id="pooling-in-imputation-1" class="slide level2">
 <h2>Pooling in imputation</h2>
 <p>Simply using <span class="math inline">\(\bar{Q}\)</span> and <span class="math inline">\(\bar{U}_m\)</span> to obtain our inferences would be to simplistic. In that case we would ignore any possible variation between the separate <span class="math inline">\(\hat{Q}_l\)</span> and the fact that we only generate a finite set of imputations <span class="math inline">\(m\)</span>. Rubin (1987, p.&nbsp;76) established that the total variance <span class="math inline">\(T\)</span> of <span class="math inline">\((Q-\bar{Q})\)</span> would equal</p>
@@ -867,18 +791,21 @@ F-statistic: 378.8 on 2 and 221 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Where the between imputation variance <span class="math inline">\(B\)</span> is defined as</p>
 <p><span class="math display">\[B = \sum_{l=1}^{m}(\hat{Q}_l - \bar{Q})^\prime(\hat{Q}_l - \bar{Q}) / (m-1)\]</span></p>
 <p><strong>This assumes that some of the data are observed and remain constant over the synthetic sets</strong></p>
-<p>The total variance <span class="math inline">\(T\)</span> of <span class="math inline">\((Q-\bar{Q})\)</span> should <sup>1</sup> equal</p>
+<p>The total variance <span class="math inline">\(T\)</span> of <span class="math inline">\((Q-\bar{Q})\)</span> should (Reiter, 2003) equal</p>
 <p><span class="math display">\[T = \bar{U} + B/m.\]</span></p>
-<aside><ol class="aside-footnotes"><li id="fn3"><p>Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.</p></li></ol></aside></section>
+<div class="footer">
+<p>Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.</p>
+</div>
+</section>
 <section id="so-the-correct-code-is" class="slide level2">
 <h2>So, the correct code is</h2>
 <div class="cell" data-hash="Lecture_cache/revealjs/unnamed-chunk-7_38326931966ded09d9e854f5a2ca854e">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>boys <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>, <span class="at">where =</span> <span class="fu">matrix</span>(<span class="cn">TRUE</span>, <span class="dv">748</span>, <span class="dv">9</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-3"><a href="#cb8-3"></a>  <span class="fu">complete</span>(<span class="st">"all"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-5"><a href="#cb8-5"></a>  <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>boys <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>, <span class="at">where =</span> <span class="fu">matrix</span>(<span class="cn">TRUE</span>, <span class="dv">748</span>, <span class="dv">9</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3"></a>  <span class="fu">complete</span>(<span class="st">"all"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a href="#cb9-4"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> age <span class="sc">+</span> tv)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-5"><a href="#cb9-5"></a>  <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-6"><a href="#cb9-6"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         term   estimate  std.error  statistic       df      p.value
 1 (Intercept) 71.1914095 0.69301891 102.726504  976.576 0.000000e+00
@@ -900,16 +827,16 @@ F-statistic: 378.8 on 2 and 221 DF,  p-value: &lt; 2.2e-16</code></pre>
 <section id="generating-more-synthetic-data" class="slide level2">
 <h2>Generating more synthetic data</h2>
 <div class="cell" data-hash="Lecture_cache/revealjs/unnamed-chunk-8_333002268e17063c90e972e5a0962eaf">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>mira <span class="ot">&lt;-</span> boys <span class="sc">%&gt;%</span> </span>
-<span id="cb10-2"><a href="#cb10-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">6</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>, <span class="at">where =</span> <span class="fu">matrix</span>(<span class="cn">TRUE</span>, <span class="dv">748</span>, <span class="dv">9</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-3"><a href="#cb10-3"></a>  <span class="fu">list</span>(<span class="st">'1'</span> <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">complete</span>(., <span class="dv">1</span>), <span class="fu">complete</span>(., <span class="dv">2</span>)),</span>
-<span id="cb10-4"><a href="#cb10-4"></a>       <span class="st">'2'</span> <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">complete</span>(., <span class="dv">3</span>), <span class="fu">complete</span>(., <span class="dv">4</span>)),</span>
-<span id="cb10-5"><a href="#cb10-5"></a>       <span class="st">'3'</span> <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">complete</span>(., <span class="dv">5</span>), <span class="fu">complete</span>(., <span class="dv">6</span>))) <span class="sc">%&gt;%</span> .[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">%&gt;%</span> </span>
-<span id="cb10-6"><a href="#cb10-6"></a>  data.table<span class="sc">::</span><span class="fu">setattr</span>(<span class="st">"class"</span>, <span class="fu">c</span>(<span class="st">"mild"</span>, <span class="fu">class</span>(.))) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-7"><a href="#cb10-7"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> reg))</span>
-<span id="cb10-8"><a href="#cb10-8"></a></span>
-<span id="cb10-9"><a href="#cb10-9"></a>mira <span class="sc">%&gt;%</span> <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-10"><a href="#cb10-10"></a>  <span class="fu">summary</span>() <span class="sc">%&gt;%</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">"term"</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>mira <span class="ot">&lt;-</span> boys <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2"></a>  <span class="fu">mice</span>(<span class="at">m =</span> <span class="dv">6</span>, <span class="at">method =</span> <span class="st">"cart"</span>, <span class="at">printFlag =</span> <span class="cn">FALSE</span>, <span class="at">where =</span> <span class="fu">matrix</span>(<span class="cn">TRUE</span>, <span class="dv">748</span>, <span class="dv">9</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="fu">list</span>(<span class="st">'1'</span> <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">complete</span>(., <span class="dv">1</span>), <span class="fu">complete</span>(., <span class="dv">2</span>)),</span>
+<span id="cb11-4"><a href="#cb11-4"></a>       <span class="st">'2'</span> <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">complete</span>(., <span class="dv">3</span>), <span class="fu">complete</span>(., <span class="dv">4</span>)),</span>
+<span id="cb11-5"><a href="#cb11-5"></a>       <span class="st">'3'</span> <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">complete</span>(., <span class="dv">5</span>), <span class="fu">complete</span>(., <span class="dv">6</span>))) <span class="sc">%&gt;%</span> .[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">%&gt;%</span> </span>
+<span id="cb11-6"><a href="#cb11-6"></a>  data.table<span class="sc">::</span><span class="fu">setattr</span>(<span class="st">"class"</span>, <span class="fu">c</span>(<span class="st">"mild"</span>, <span class="fu">class</span>(.))) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a href="#cb11-7"></a>  <span class="fu">map</span>(<span class="sc">~</span>.x <span class="sc">%$%</span> <span class="fu">lm</span>(hgt <span class="sc">~</span> reg))</span>
+<span id="cb11-8"><a href="#cb11-8"></a></span>
+<span id="cb11-9"><a href="#cb11-9"></a>mira <span class="sc">%&gt;%</span> <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-10"><a href="#cb11-10"></a>  <span class="fu">summary</span>() <span class="sc">%&gt;%</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">"term"</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            estimate std.error statistic     df p.value
 (Intercept)  150.427     4.684    32.114 11.731   0.000
@@ -918,9 +845,9 @@ regwest      -22.263     4.787    -4.650 32.970   0.000
 regsouth     -23.700     5.410    -4.381 14.367   0.001
 regcity      -24.295     6.477    -3.751 15.545   0.002</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>mira <span class="sc">%&gt;%</span> <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>, </span>
-<span id="cb12-2"><a href="#cb12-2"></a>              <span class="at">custom.t =</span> <span class="st">".data$ubar * 2 + .data$b / .data$m"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3"></a>  <span class="fu">summary</span>() <span class="sc">%&gt;%</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">"term"</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>mira <span class="sc">%&gt;%</span> <span class="fu">pool</span>(<span class="at">rule =</span> <span class="st">"reiter2003"</span>, </span>
+<span id="cb13-2"><a href="#cb13-2"></a>              <span class="at">custom.t =</span> <span class="st">".data$ubar * 2 + .data$b / .data$m"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3"></a>  <span class="fu">summary</span>() <span class="sc">%&gt;%</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(<span class="st">"term"</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            estimate std.error statistic     df p.value
 (Intercept)  150.427     5.901    25.492 11.731   0.000
@@ -930,29 +857,40 @@ regsouth     -23.700     6.901    -3.434 14.367   0.004
 regcity      -24.295     8.297    -2.928 15.545   0.010</code></pre>
 </div>
 </div>
-<p>Some adjustment to the pooling rules is neede to avoid p-inflation <sup>1</sup>.</p>
-<aside><ol class="aside-footnotes"><li id="fn4"><p>Raab, Gillian M, Beata Nowok, and Chris Dibben. 2018. “Practical Data Synthesis for Large Samples”. Journal of Privacy and Confidentiality 7 (3):67-97. <a href="https://doi.org/10.29012/jpc.v7i3.407">https://doi.org/10.29012/jpc.v7i3.407.</a></p></li></ol></aside></section>
+<p>Some adjustment to the pooling rules is neede to avoid p-inflation.</p>
+<div class="footer">
+<p>Raab, Gillian M, Beata Nowok, and Chris Dibben. 2018. “Practical Data Synthesis for Large Samples”. Journal of Privacy and Confidentiality 7 (3):67-97. <a href="https://doi.org/10.29012/jpc.v7i3.407">https://doi.org/10.29012/jpc.v7i3.407.</a></p>
+</div>
+</section>
 <section id="some-care-is-needed" class="slide level2">
 <h2>Some care is needed</h2>
 <p>With synthetic data generation and synthetic data implementation come some risks.</p>
 <p>Any idea?</p>
+</section></section>
+<section>
+<section id="what-should-synthetic-data-be" class="title-slide slide level1 center">
+<h1>What should synthetic data be?</h1>
+
 </section>
 <section id="testing-validity" class="slide level2">
 <h2>Testing validity</h2>
 <p>Nowadays many synthetic data cowboys claim that they can generate synthetic data that looks like the real data that served as input.</p>
 <p>This is like going to Madam Tusseaud’s: at face value it looks identical, but when experienced in real life it’s just not the same as the living thing.</p>
 <p>Many of these synthetic data packages only focus on marginal or conditional distributions. With <code>mice</code> we also consider the inferential properties of the synthetic data.</p>
-<p>In general, we argue <sup>1</sup> that any synthetic data generation procedure should</p>
+<p>In general, we argue [^4] that any synthetic data generation procedure should</p>
 <ol type="1">
 <li>Preserve marginal distributions</li>
 <li>Preserve conditional distribution</li>
 <li>Yield valid inference</li>
 <li>Yield synthetic data that are indistinguishable from the real data</li>
 </ol>
-<aside><ol class="aside-footnotes"><li id="fn5"><p>Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. <a href="https://doi.org/10.3390/psych3040045">https://doi.org/10.3390/psych3040045</a></p></li></ol></aside></section>
+<div class="footer">
+<p>Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. <a href="https://doi.org/10.3390/psych3040045">https://doi.org/10.3390/psych3040045</a></p>
+</div>
+</section>
 <section id="example-from-simulation" class="slide level2">
 <h2>Example from simulation</h2>
-<p>When valid synthetic data are generated, the variance of the estimates is correct, such that the confidence intervals cover the population (i.e.&nbsp;true) value sufficiently <sup>1</sup>. Take e.g.&nbsp;the following proportional odds model from Volker &amp; Vink (2021):</p>
+<p>When valid synthetic data are generated, the variance of the estimates is correct, such that the confidence intervals cover the population (i.e.&nbsp;true) value sufficiently [^5]. Take e.g.&nbsp;the following proportional odds model from Volker &amp; Vink (2021):</p>
 <table>
 <colgroup>
 <col style="width: 34%">
@@ -1031,7 +969,10 @@ regcity      -24.295     8.297    -2.928 15.545   0.010</code></pre>
 </tr>
 </tbody>
 </table>
-<aside><ol class="aside-footnotes"><li id="fn6"><p>Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. <a href="https://doi.org/10.3390/psych3040045">https://doi.org/10.3390/psych3040045</a></p></li></ol></aside></section>
+<div class="footer">
+<p>Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. <a href="https://doi.org/10.3390/psych3040045">https://doi.org/10.3390/psych3040045</a></p>
+</div>
+</section>
 <section id="end-of-presentation" class="slide level2">
 <h2>End of presentation</h2>
 <center>
@@ -1042,8 +983,9 @@ regcity      -24.295     8.297    -2.928 15.545   0.010</code></pre>
 </figure>
 </div>
 </center>
+<p><img src="logo.png" class="slide-logo"></p>
 <div class="footer footer-default">
-
+<p>Gerko Vink and Thom Volker</p>
 </div>
 </section></section>
 
@@ -1099,7 +1041,7 @@ regcity      -24.295     8.297    -2.928 15.545   0.010</code></pre>
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: false,
+        slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',
@@ -1224,7 +1166,7 @@ regcity      -24.295     8.297    -2.928 15.545   0.010</code></pre>
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1050,
+        width: 1200,
 
         height: 700,
 
