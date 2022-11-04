@@ -82,7 +82,7 @@ vars <- c(age = "Age in years",
                serum_sodium = "Level of serum sodium in the blood (mg/dL)",
                smoking = "Whether the patient smokes (No/Yes)",
                follow_up = "Follow-up period (days)",
-               deceased = "Whether the patient decreased during the follow-up period")
+               deceased = "Whether the patient deceased during the follow-up period")
 paste0("- `", 
        names(vars), 
        "`: ", 
@@ -139,7 +139,7 @@ In case you brought your own data, you can load it into `R` using a function tha
 
 ```{r load-own-data, echo = F}
 tibble::tibble(`Programme` = c("Excel", "Excel", "SPSS", "Stata"), 
-               `Format` = c(".csv", ".xlsx", ".sav", ".dta"), 
+               `Format` = c(".xlsx", ".csv", ".sav", ".dta"), 
                `Command` = c('readxl::read_xlsx("path_to_file/data_name.xlsx")',
                              'readr::read_csv("path_to_file/data_name.csv")',
                              'haven::read_sav("path_to_file/data_name.sav")',
