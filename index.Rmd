@@ -4,7 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: scroll
-    self_contained: false
+    self_contained: true
 ---
 
 # Intro {.sidebar}
