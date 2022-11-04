@@ -1,113 +1,33 @@
 ---
 title: "Synthetic data generation with `mice`"
+author: 
+  - name: Gerko Vink
+    orcid: 0000-0001-9767-1924
+    email: g.vink@uu.nl
+    affiliations:
+      - name: Utrecht University
+  - name: Thom Volker
+    orcid: 0000-0002-2408-7820
+    email: t.b.volker@uu.nl
+    affiliations:
+      - name: Utrecht University
+institute: Methodology & Statistics @ Utrecht University
+date: November 4, 2022
 format: 
   revealjs:
     theme: [solarized, gerko.scss]
     progress: true
     margin: 0.075
+    logo: logo.png 
+    toc: true
+    toc-depth: 1
+    toc-title: Outline
+    slide-number: true
+    scrollable: false
+    width: 1200
+    reference-location: margin
+    footer: Gerko Vink and Thom Volker
 ---
-
-```{=html}
-<style>
-
-.notepaper {
-  position: relative;
-  margin: 30px auto;
-  padding: 29px 20px 20px 45px;
-  width: 800px;
-  line-height: 30px;
-  color: #6a5f49;
-  text-shadow: 0 1px 1px ;
-  background-color: #f2f6c1;
-  background-image: -webkit-radial-gradient(center, cover, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 90%), -webkit-repeating-linear-gradient(top, transparent 0%, transparent 29px, rgba(239, 207, 173, 0.7) 29px, rgba(239, 207, 173, 0.7) 30px);
-  background-image: -moz-radial-gradient(center, cover, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 90%), -moz-repeating-linear-gradient(top, transparent 0%, transparent 29px, rgba(239, 207, 173, 0.7) 29px, rgba(239, 207, 173, 0.7) 30px);
-  background-image: -o-radial-gradient(center, cover, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.1) 90%), -o-repeating-linear-gradient(top, transparent 0%, transparent 29px, rgba(239, 207, 173, 0.7) 29px, rgba(239, 207, 173, 0.7) 30px);
-  border: 1px solid #c3baaa;
-  border-color: rgba(195, 186, 170, 0.9);
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), inset 0 0 5px #d8e071, 0 0 1px rgba(0, 0, 0, 0.1), 0 2px rgba(0, 0, 0, 0.02);
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), inset 0 0 5px #d8e071, 0 0 1px rgba(0, 0, 0, 0.1), 0 2px rgba(0, 0, 0, 0.02);
-}
-
-.notepaper:before, .notepaper:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-
-.notepaper:before {
-  left: 28px;
-  width: 2px;
-  border: solid #efcfad;
-  border-color: rgba(239, 207, 173, 0.9);
-  border-width: 0 1px;
-}
-
-.notepaper:after {
-  z-index: -1;
-  left: 0;
-  right: 0;
-  background: rgba(242, 246, 193, 0.9);
-  border: 1px solid rgba(170, 157, 134, 0.7);
-  -webkit-transform: rotate(2deg);
-  -moz-transform: rotate(2deg);
-  -ms-transform: rotate(2deg);
-  -o-transform: rotate(2deg);
-  transform: rotate(2deg);
-}
-
-.quote {
-  font-family: Georgia, serif;
-  font-size: 14px;
-}
-
-.curly-quotes:before, .curly-quotes:after {
-  display: inline-block;
-  vertical-align: top;
-  height: 30px;
-  line-height: 48px;
-  font-size: 50px;
-  opacity: .2;
-}
-
-.curly-quotes:before {
-  content: '\201C';
-  margin-right: 4px;
-  margin-left: -8px;
-}
-
-.curly-quotes:after {
-  content: '\201D';
-  margin-left: 4px;
-  margin-right: -8px;
-}
-
-.quote-by {
-  display: block;
-  padding-right: 10px;
-  text-align: right;
-  font-size: 13px;
-  font-style: italic;
-  color: #84775c;
-}
-
-.lt-ie8 .notepaper {
-  padding: 15px 25px;
-}
-
-div.footnotes {
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 70px;
-  width: 80%;
-  font-size: 0.6em;
-}
-</style>
-```
-
 
 ## Disclaimer
 
@@ -118,18 +38,12 @@ When external figures and other sources are shown:
 1)  the references are included when the origin is known, or
 2)  the objects are directly linked from within the public domain and the source can be obtained by right-clicking the objects.
 
+Scientific references are in the footer. 
+
 Opinions are my own.
-
-## This meeting
-
-1.  Some vocabulary
-2.  Statistical inference
-3.  Confidence intervals
-4.  Missing data
-5.  Synthetic data
-6.  synthetic data generation with mice
-
-```{r}
+<br><br><br><br>
+Packages used:
+```{r echo=TRUE}
 library(mice)
 library(dplyr)
 library(magrittr)
@@ -160,10 +74,9 @@ set.seed(123)
 
 We begin today with an exploration into statistical inference.
 
-::: notepaper
-<figure class="quote"><blockquote class="curly-quotes" cite="https://www.youtube.com/watch?v=qYLrc9hy0t0"><font color="black"> Statistical inference is the process of drawing conclusions from truths </font></blockquote>
-</figure>
-:::
+<center>
+**Statistical inference is the process of drawing conclusions from truths **
+</center>
 
 Truths are boring, but they are convenient.
 
@@ -301,6 +214,8 @@ As a function of model complexity in specific modeling efforts, these components
 
 # Hello, dark data
 
+![](img/dd.jpg){width=75%}
+
 ## Let's do it again with missingness
 
 ::: columns
@@ -351,6 +266,8 @@ There are two sources of uncertainty that we need to cover:
 **More challenging if the sample does not randomly come from the population or if the feature set is too limited to solve for the substantive model of interest**
 :::
 :::
+
+# Embrace the darkness
 
 ## Now how do we know we did well?
 
@@ -425,6 +342,8 @@ The imputed values are mimicking the sampling variation and can be used to infer
 
 - The observed data holds the information about the missing data (MAR/MCAR)
 
+# Synthetic data generation
+
 ## Imputation vs Synthetisation
 Instead of drawing only imputations from the posterior predictive distribution, we might as well overimpute the observed data. 
 ![](img/patterns.png)
@@ -444,7 +363,7 @@ boys %>%
 But we make an error!
 
 ## Pooling in imputation
-Rubin (1987, p76)[^1] defined the following rules:
+Rubin (1987, p76) defined the following rules:
 
 For any number of multiple imputations $m$, the combination of the analysis results for any estimate $\hat{Q}$ of estimand $Q$ with corresponding variance $U$, can be done in terms of the average of the $m$ complete-data estimates
 
@@ -454,7 +373,9 @@ and the corresponding average of the $m$ complete data variances
 
 $$\bar{U} = \sum_{l=1}^{m}{U}_l / m.$$ 
 
-[^1]: Rubin, D.B. (1987). Multiple Imputation for Nonresponse in Surveys. New York: John Wiley and Sons.
+::: footer
+Rubin, D.B. (1987). Multiple Imputation for Nonresponse in Surveys. New York: John Wiley and Sons.
+:::
 
 ## Pooling in imputation
 Simply using $\bar{Q}$ and $\bar{U}_m$ to obtain our inferences would be to simplistic. In that case we would ignore any possible variation between the separate $\hat{Q}_l$ and the fact that we only generate a finite set of imputations $m$. Rubin (1987, p. 76) established that the total variance $T$ of $(Q-\bar{Q})$ would equal
@@ -467,11 +388,13 @@ $$B = \sum_{l=1}^{m}(\hat{Q}_l - \bar{Q})^\prime(\hat{Q}_l - \bar{Q}) / (m-1)$$
 
 **This assumes that some of the data are observed and remain constant over the synthetic sets**
 
-The total variance $T$ of $(Q-\bar{Q})$ should [^1] equal
+The total variance $T$ of $(Q-\bar{Q})$ should (Reiter, 2003) equal
 
 $$T = \bar{U} + B/m.$$
 
-[^1]: Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.
+::: footer
+Reiter, J.P. (2003). Inference for Partially Synthetic, Public Use Microdata Sets. Survey Methodology, 29, 181-189.
+:::
 
 ## So, the correct code is 
 ```{r echo = TRUE, cache = TRUE}
@@ -509,14 +432,18 @@ mira %>% pool(rule = "reiter2003",
               custom.t = ".data$ubar * 2 + .data$b / .data$m") %>% 
   summary() %>% tibble::column_to_rownames("term") %>% round(3)
 ```
-Some adjustment to the pooling rules is neede to avoid p-inflation [^3].
+Some adjustment to the pooling rules is neede to avoid p-inflation.
 
-[^3]: Raab, Gillian M, Beata Nowok, and Chris Dibben. 2018. “Practical Data Synthesis for Large Samples”. Journal of Privacy and Confidentiality 7 (3):67-97. [https://doi.org/10.29012/jpc.v7i3.407.](https://doi.org/10.29012/jpc.v7i3.407)
+::: footer
+Raab, Gillian M, Beata Nowok, and Chris Dibben. 2018. “Practical Data Synthesis for Large Samples”. Journal of Privacy and Confidentiality 7 (3):67-97. [https://doi.org/10.29012/jpc.v7i3.407.](https://doi.org/10.29012/jpc.v7i3.407)
+:::
 
 ## Some care is needed
 With synthetic data generation and synthetic data implementation come some risks. 
 
 Any idea?
+
+# What should synthetic data be?
 
 ## Testing validity
 Nowadays many synthetic data cowboys claim that they can generate synthetic data that looks like the real data that served as input. 
@@ -532,7 +459,10 @@ In general, we argue [^4] that any synthetic data generation procedure should
 3. Yield valid inference
 4. Yield synthetic data that are indistinguishable from the real data
 
-[^4]: Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. [https://doi.org/10.3390/psych3040045](https://doi.org/10.3390/psych3040045)
+
+::: footer
+Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. [https://doi.org/10.3390/psych3040045](https://doi.org/10.3390/psych3040045)
+:::
 
 ## Example from simulation
 When valid synthetic data are generated, the variance of the estimates is correct, such that the confidence intervals cover the population (i.e. true) value sufficiently [^5]. Take e.g. the following proportional odds model from Volker & Vink (2021):
@@ -550,7 +480,9 @@ When valid synthetic data are generated, the variance of the estimates is correc
 | G3$|$G4     | -3.842   | -0.244 | 0.948 |
 | G4$|$G5     | -2.639   | -0.253 | 0.947 |
  
-[^5]: Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. [https://doi.org/10.3390/psych3040045](https://doi.org/10.3390/psych3040045)
+::: footer
+Volker, T.B.; Vink, G. Anonymiced Shareable Data: Using mice to Create and Analyze Multiply Imputed Synthetic Datasets. Psych 2021, 3, 703-716. [https://doi.org/10.3390/psych3040045](https://doi.org/10.3390/psych3040045)
+:::
 
 ## End of presentation
 
