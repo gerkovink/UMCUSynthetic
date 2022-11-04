@@ -29,6 +29,11 @@ format:
     footer: Gerko Vink and Thom Volker
 ---
 
+## Materials
+
+All materials can be found at <br><br>
+[www.gerkovink.com/syn](https://www.gerkovink.com/syn)
+
 ## Disclaimer
 
 I owe a debt of gratitude to many people as the thoughts and teachings in my slides are the process of years-long development cycles and discussions with my team, friends, colleagues and peers. When someone has contributed to the content of the slides, I have credited their authorship.
